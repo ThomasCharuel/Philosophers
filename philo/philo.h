@@ -6,6 +6,13 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 15:56:42 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:06:36 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef PHILO_H
+# define PHILO_H
+
+# include <stdio.h>
+
+#endif

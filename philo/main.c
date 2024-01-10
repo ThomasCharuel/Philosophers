@@ -6,13 +6,18 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 15:56:52 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:13:19 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	main(void)
+int	main(int argc, char **argv)
 {
+	(void)argv;
+	if (argc == 5 || argc == 6)
+	{
+		printf("YO!");
+	}
 	return (0);
 }
