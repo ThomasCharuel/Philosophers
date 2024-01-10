@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 20:16:32 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/10 22:53:09 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef struct s_state
 unsigned int			ft_atoui(char *s);
 
 int						state_init(int argc, char **argv, t_state *state);
+void					mutex_init(t_state state);
 void					state_cleanup(t_state state);
 
 #endif

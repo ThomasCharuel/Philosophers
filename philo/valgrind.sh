@@ -1,1 +1,1 @@
-make && valgrind ./philo 45 45 45 45 8
+make && valgrind --tool=helgrind ./philo 45 45 45 45 8
