@@ -6,17 +6,11 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 19:06:52 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/10 20:20:53 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-// typedef struct s_counter
-// {
-// 	pthread_mutex_t	count_mutex;
-// 	unsigned int	count;
-// }					t_counter;
 
 // void	*thread_routine(void *data)
 // {
@@ -56,6 +50,7 @@ int	main(int argc, char **argv)
 	{
 		if (state_init(argc, argv, &state) == ERROR)
 			return (0);
+		mutex_init(state);
 		printf("Number of philosophers: %u\n", state.number_of_philosophers);
 		printf("Time to die: %u\n", state.time_to_die);
 		printf("Time to eat: %u\n", state.time_to_eat);

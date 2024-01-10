@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 19:09:16 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/10 20:28:17 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	state_init(int argc, char **argv, t_state *state)
 {
+	state->fork_mutexes = NULL;
+	state->philosophers = NULL;
 	state->number_of_philosophers = ft_atoui(argv[1]);
 	state->time_to_die = ft_atoui(argv[2]);
 	state->time_to_eat = ft_atoui(argv[3]);
@@ -26,11 +28,20 @@ int	state_init(int argc, char **argv, t_state *state)
 			* sizeof(pthread_mutex_t));
 	if (!state->fork_mutexes)
 		return (ERROR);
+	state->philosophers = (t_philosopher *)malloc(state->number_of_philosophers
+			* sizeof(t_philosopher));
+	if (!state->philosophers)
+		return (ERROR);
 	return (SUCCESS);
 }
 
-void	state_cleanup(t_state state)
+void
+
+	void
+	state_cleanup(t_state state)
 {
 	if (state.fork_mutexes)
 		free(state.fork_mutexes);
+	if (state.philosophers)
+		free(state.philosophers);
 }
