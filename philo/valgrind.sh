@@ -1,0 +1,1 @@
+make && valgrind ./philo 45 45 45 45 8
