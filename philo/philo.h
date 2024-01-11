@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 10:02:49 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/11 11:30:49 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_philosopher
 
 typedef struct s_fork
 {
-	pthread_mutex_t		lock;
+	pthread_mutex_t		*lock;
 	bool				is_available;
 }						t_fork;
 
@@ -53,6 +53,7 @@ typedef struct s_state
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
 	unsigned int		number_of_times_each_philosopher_must_eat;
+	pthread_mutex_t		*turn_lock;
 	t_fork				*forks;
 	t_philosopher		*philosophers;
 }						t_state;
