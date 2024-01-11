@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 20:35:28 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:41:39 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,11 @@ void	wait_simulation_ends(t_state state)
 
 	i = 0;
 	while (i < state.number_of_philosophers)
-		pthread_join(state.philosophers[i++].tid, NULL);
+	{
+		printf("TID %zu: %lu\n", i, state.philosophers[i].tid);
+		pthread_join(state.philosophers[i].tid, NULL);
+		i++;
+	}
 }
 
 void	state_cleanup(t_state state)
