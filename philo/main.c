@@ -6,41 +6,30 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/10 20:20:53 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/11 10:06:32 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// void	*thread_routine(void *data)
-// {
-// 	pthread_t	tid;
-// 	t_counter	*counter;
+void	*thread_routine(void *data)
+{
+	t_philosopher	*philosopher;
 
-// 	tid = pthread_self();
-// 	counter = (t_counter *)data;
-// 	pthread_mutex_lock(&counter->count_mutex);
-// 	//
-// 	pthread_mutex_unlock(&counter->count_mutex);
-// 	return (NULL);
-// }
-
-// int	main(void)
-// {
-// 	pthread_t	tid1;
-// 	pthread_t	tid2;
-// 	t_counter	counter;
-
-// 	counter.count = 0;
-// 	pthread_mutex_init(&counter.count_mutex, NULL);
-// 	pthread_create(&tid1, NULL, thread_routine, NULL);
-// 	pthread_create(&tid2, NULL, thread_routine, NULL);
-// 	// The main thread waits for the new threads to end with pthread_join
-// 	pthread_join(tid1, NULL);
-// 	pthread_join(tid2, NULL);
-// 	pthread_mutex_destroy(&counter.count_mutex);
-// 	return (0);
-// }
+	philosopher = (t_philosopher *)data;
+	while (philosopher->simulation_state->is_running)
+	{
+		if (has_starved(last_eating_timestamp, time_to_die))
+		{
+			printf("%u died\n", philosopher->id);
+			return (NULL);
+		}
+		if (philosopher->state == IS_THINKING)
+		{
+		}
+	}
+	return (NULL);
+}
 
 int	main(int argc, char **argv)
 {
@@ -49,8 +38,10 @@ int	main(int argc, char **argv)
 	if (argc == 5 || argc == 6)
 	{
 		if (state_init(argc, argv, &state) == ERROR)
+		{
+			state_cleanup(state);
 			return (0);
-		mutex_init(state);
+		}
 		printf("Number of philosophers: %u\n", state.number_of_philosophers);
 		printf("Time to die: %u\n", state.time_to_die);
 		printf("Time to eat: %u\n", state.time_to_eat);
@@ -58,6 +49,7 @@ int	main(int argc, char **argv)
 		if (argc == 6)
 			printf("Number of times each philosopher must eat: %u\n",
 				state.number_of_times_each_philosopher_must_eat);
+		wait_simulation_ends(state);
 		state_cleanup(state);
 	}
 	return (0);
