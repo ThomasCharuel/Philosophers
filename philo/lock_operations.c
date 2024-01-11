@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:20:06 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 12:25:23 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:16:38 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,4 @@ int	init_lock(t_lock *lock)
 		return (ERROR);
 	lock->is_initialized = true;
 	return (SUCCESS);
-}
-
-void	locked_printf(t_lock lock)
-{
-	pthread_mutex_lock(&lock.mutex);
-	pthread_mutex_unlock(&lock.mutex);
 }
