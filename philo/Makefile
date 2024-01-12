@@ -6,7 +6,7 @@
 #    By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 16:06:44 by tcharuel          #+#    #+#              #
-#    Updated: 2024/01/11 20:02:33 by tcharuel         ###   ########.fr        #
+#    Updated: 2024/01/12 15:32:54 by tcharuel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,5 +29,8 @@ fclean: clean
 	$(RM) $(NAME)
 
 re: fclean all
+
+valgrind: re
+	valgrind --tool=helgrind -s ./philo 2 40 41 42 8
 
 .PHONY: all clean fclean re

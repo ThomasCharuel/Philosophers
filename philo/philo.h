@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 12:20:37 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:29:57 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ typedef struct s_state
 unsigned int			ft_atoui(char *s);
 
 int						state_init(int argc, char **argv, t_state *state);
-void					wait_simulation_ends(t_state state);
-void					state_cleanup(t_state state);
+void					wait_simulation_ends(t_state *state);
+void					state_cleanup(t_state *state);
 
 void					*philosopher_routine(void *data);
 

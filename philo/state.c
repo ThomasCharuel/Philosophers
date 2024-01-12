@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 20:41:39 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:30:48 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,35 +72,34 @@ int	state_init(int argc, char **argv, t_state *state)
 	return (SUCCESS);
 }
 
-void	wait_simulation_ends(t_state state)
+void	wait_simulation_ends(t_state *state)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < state.number_of_philosophers)
+	while (i < state->number_of_philosophers)
 	{
-		printf("TID %zu: %lu\n", i, state.philosophers[i].tid);
-		pthread_join(state.philosophers[i].tid, NULL);
+		pthread_join(state->philosophers[i].tid, NULL);
 		i++;
 	}
 }
 
-void	state_cleanup(t_state state)
+void	state_cleanup(t_state *state)
 {
 	size_t	i;
 
-	if (state.turn_lock.is_initialized)
-		pthread_mutex_destroy(&(state.turn_lock.mutex));
-	if (state.printf_lock.is_initialized)
-		pthread_mutex_destroy(&(state.printf_lock.mutex));
-	if (state.forks)
+	if (state->turn_lock.is_initialized)
+		pthread_mutex_destroy(&(state->turn_lock.mutex));
+	if (state->printf_lock.is_initialized)
+		pthread_mutex_destroy(&(state->printf_lock.mutex));
+	if (state->forks)
 	{
 		i = 0;
-		while (i < state.number_of_philosophers
-			&& state.forks[i].lock.is_initialized)
-			pthread_mutex_destroy(&(state.forks[i++].lock.mutex));
-		free(state.forks);
+		while (i < state->number_of_philosophers
+			&& state->forks[i].lock.is_initialized)
+			pthread_mutex_destroy(&(state->forks[i++].lock.mutex));
+		free(state->forks);
 	}
-	if (state.philosophers)
-		free(state.philosophers);
+	if (state->philosophers)
+		free(state->philosophers);
 }

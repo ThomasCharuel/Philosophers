@@ -6,16 +6,11 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/11 20:14:19 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:28:08 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	printf_hello(unsigned int id)
-{
-	printf("%u philosopher\n", id);
-}
 
 void	*philosopher_routine(void *data)
 {
