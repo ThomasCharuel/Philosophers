@@ -6,13 +6,13 @@
 #    By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 16:06:44 by tcharuel          #+#    #+#              #
-#    Updated: 2024/01/16 16:25:42 by tcharuel         ###   ########.fr        #
+#    Updated: 2024/01/16 22:06:05 by tcharuel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = philo
 
-SRC_FILES = main.c parsing.c simulation.c philosopher.c lock_operations.c log.c
+SRC_FILES = main.c parsing.c simulation.c philosopher.c lock_operations.c log.c timestamp.c
 
 CC = cc
 CFLAGS = -g3 -Wextra -Wall -Werror

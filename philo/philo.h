@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 18:22:00 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/16 22:04:42 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ t_simulation_state get_simulation_state(t_simulation *simulation);
 void set_simulation_state(t_simulation *simulation, t_simulation_state state);
 t_philosopher_state get_philosopher_state(t_philosopher *philosopher);
 void set_philosopher_state(t_philosopher *philosopher, t_philosopher_state state);
+
+long int	get_timestamp_ms_diff(struct timeval a, struct timeval b);
 
 void					log_action(int philo_action, t_philosopher *philo);
 

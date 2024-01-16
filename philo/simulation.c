@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 18:34:02 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/16 22:22:20 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,22 +100,28 @@ void	wait_simulation_ends(t_simulation *simulation)
 	size_t	i;
 	struct timeval current_time;
 
-	i = 0;
-	while (usleep(10)) {
-		
-		if () {
-			printf("0 %u is thinking\n", simulation->philosophers[i].id);
-			break;
-		}
-		i++;
-		i %= simulation->number_of_philosophers;
-	}
-	i = 0;
-	while (i < simulation->number_of_philosophers)
+	while (1)
 	{
-		pthread_join(simulation->philosophers[i].tid, NULL);
-		i++;
-	}
+		i = 0;
+		gettimeofday(&current_time, NULL);
+		while (i < simulation->number_of_philosophers)
+		{
+			if (get_timestamp_ms_diff(current_time, simulation->philosophers[i].last_eating_timestamp) > simulation->time_to_die)
+			{
+				set_philosopher_state(&simulation->philosophers[i], PHILOSOPHER_IS_DEAD);
+				log_action(PHILOSOPHER_DIES, &simulation->philosophers[i]);
+				set_simulation_state(simulation, SIMULATION_ENDED);
+				i = 0;
+				while (i < simulation->number_of_philosophers)
+				{
+					pthread_join(simulation->philosophers[i].tid, NULL);
+					i++;
+				}
+				return ;
+			}
+			i++;
+		}
+	}	
 }
 
 void	simulation_cleanup(t_simulation *simulation)

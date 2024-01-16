@@ -6,25 +6,19 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 16:25:11 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/16 22:18:38 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long int	ms_since_simulation_started(struct timeval simulation_start)
-{
-	struct timeval tv;
-	
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * 1000 + tv.tv_usec / 1000) - (simulation_start.tv_sec * 1000 + simulation_start.tv_usec / 1000));
-}
-
 void log_action(int philo_action, t_philosopher *philo)
 {
+	struct timeval current_time;
 	long int ms_since_start;
 	
-	ms_since_start = ms_since_simulation_started(philo->simulation->start_time);
+	gettimeofday(&current_time, NULL);
+	ms_since_start = get_timestamp_ms_diff(current_time, philo->simulation->start_time);
 	pthread_mutex_lock(&(philo->simulation->printf_lock.mutex));
 	if (philo_action == PHILOSOPHER_TAKES_FORK)
 		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
