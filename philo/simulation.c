@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 22:22:20 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:33:47 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,18 @@ int	philosopher_init(t_simulation *simulation)
 	{
 		simulation->philosophers[i].id = i + 1;
 		simulation->philosophers[i].state = PHILOSOPHER_INITIALIZED;
-		simulation->philosophers[i].last_eating_timestamp.tv_sec = 0;
-		simulation->philosophers[i].last_eating_timestamp.tv_usec = 0;
 		simulation->philosophers[i].simulation = simulation;
-		init_lock(&(simulation->philosophers[i].state_lock)); //TO protect
-		pthread_create(&(simulation->philosophers[i].tid), NULL, philosopher_routine,
-			&(simulation->philosophers[i]));
+		init_lock(&(simulation->philosophers[i].state_lock)); // TO protect
+		init_lock(&(simulation->philosophers[i].last_eating_time_lock));
+		pthread_create(&(simulation->philosophers[i].tid), NULL,
+			philosopher_routine, &(simulation->philosophers[i]));
 		i++;
 	}
 	return (SUCCESS);
 }
 int	simulation_init(int argc, char **argv, t_simulation *simulation)
 {
-	simulation->state= SIMULATION_INITIALIZING;
+	simulation->state = SIMULATION_INITIALIZING;
 	simulation->forks = NULL;
 	simulation->philosophers = NULL;
 	simulation->number_of_philosophers = ft_atoui(argv[1]);
@@ -68,12 +67,13 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 		simulation->number_of_times_each_philosopher_must_eat = ft_atoui(argv[5]);
 	if (init_lock(&(simulation->state_lock)) == ERROR
 		|| init_lock(&(simulation->printf_lock)) == ERROR
-		|| forks_init(simulation) == ERROR || philosopher_init(simulation) == ERROR)
+		|| forks_init(simulation) == ERROR
+		|| philosopher_init(simulation) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
 }
 
-void wait_simulation_starts(t_simulation *simulation)
+void	wait_simulation_starts(t_simulation *simulation)
 {
 	size_t	i;
 
@@ -84,12 +84,14 @@ void wait_simulation_starts(t_simulation *simulation)
 			usleep(10);
 		i++;
 	}
-	gettimeofday(&simulation->start_time, NULL);
+	simulation->start_time = get_current_time();
 	i = 0;
 	while (i < simulation->number_of_philosophers)
 	{
-		simulation->philosophers[i].last_eating_timestamp = simulation->start_time;
-		printf("0 %u is thinking\n", simulation->philosophers[i].id);
+		set_philosopher_last_eating_time(&simulation->philosophers[i],
+			simulation->start_time);
+		log_action(simulation->start_time, PHILOSOPHER_STARTS_THINKING,
+			&simulation->philosophers[i]);
 		i++;
 	}
 	set_simulation_state(simulation, SIMULATION_RUNNING);
@@ -97,19 +99,22 @@ void wait_simulation_starts(t_simulation *simulation)
 
 void	wait_simulation_ends(t_simulation *simulation)
 {
-	size_t	i;
-	struct timeval current_time;
+	size_t		i;
+	t_timestamp	current_time;
 
 	while (1)
 	{
 		i = 0;
-		gettimeofday(&current_time, NULL);
+		current_time = get_current_time();
 		while (i < simulation->number_of_philosophers)
 		{
-			if (get_timestamp_ms_diff(current_time, simulation->philosophers[i].last_eating_timestamp) > simulation->time_to_die)
+			if (current_time
+				- get_philosopher_last_eating_time(&simulation->philosophers[i]) > simulation->time_to_die)
 			{
-				set_philosopher_state(&simulation->philosophers[i], PHILOSOPHER_IS_DEAD);
-				log_action(PHILOSOPHER_DIES, &simulation->philosophers[i]);
+				set_philosopher_state(&simulation->philosophers[i],
+					PHILOSOPHER_IS_DEAD);
+				log_action(current_time, PHILOSOPHER_DIES,
+					&simulation->philosophers[i]);
 				set_simulation_state(simulation, SIMULATION_ENDED);
 				i = 0;
 				while (i < simulation->number_of_philosophers)
@@ -121,7 +126,7 @@ void	wait_simulation_ends(t_simulation *simulation)
 			}
 			i++;
 		}
-	}	
+	}
 }
 
 void	simulation_cleanup(t_simulation *simulation)
@@ -145,7 +150,11 @@ void	simulation_cleanup(t_simulation *simulation)
 		i = 0;
 		while (i < simulation->number_of_philosophers
 			&& simulation->philosophers[i].state_lock.is_initialized)
-			pthread_mutex_destroy(&(simulation->philosophers[i++].state_lock.mutex));
+		{
+			pthread_mutex_destroy(&(simulation->philosophers[i].state_lock.mutex));
+			pthread_mutex_destroy(&(simulation->philosophers[i].last_eating_time_lock.mutex));
+			i++;
+		}
 		free(simulation->philosophers);
 	}
 }

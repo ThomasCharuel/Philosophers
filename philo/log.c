@@ -6,20 +6,19 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 22:18:38 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:28:49 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void log_action(int philo_action, t_philosopher *philo)
+void	log_action(t_timestamp action_time, int philo_action,
+		t_philosopher *philo)
 {
-	struct timeval current_time;
-	long int ms_since_start;
-	
-	gettimeofday(&current_time, NULL);
-	ms_since_start = get_timestamp_ms_diff(current_time, philo->simulation->start_time);
-	pthread_mutex_lock(&(philo->simulation->printf_lock.mutex));
+	t_timestamp	ms_since_start;
+
+	ms_since_start = action_time - philo->simulation->start_time;
+	lock(&philo->simulation->printf_lock);
 	if (philo_action == PHILOSOPHER_TAKES_FORK)
 		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
 	else if (philo_action == PHILOSOPHER_STARTS_EATING)
@@ -30,5 +29,5 @@ void log_action(int philo_action, t_philosopher *philo)
 		printf("%ld %u is thinking\n", ms_since_start, philo->id);
 	else if (philo_action == PHILOSOPHER_DIES)
 		printf("%ld %u died\n", ms_since_start, philo->id);
-	pthread_mutex_unlock(&(philo->simulation->printf_lock.mutex));
+	unlock(&philo->simulation->printf_lock);
 }
