@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 17:04:40 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:18:47 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 
 # define SUCCESS 0
 # define ERROR -1
+# define FALSE 0
+# define TRUE 1
 # define PHILOSOPHER_INITIALIZED 1
 # define PHILOSOPHER_IS_THINKING 2
 # define PHILOSOPHER_HAS_LEFT_FORK 21
@@ -40,9 +42,10 @@
 # define LEFT_FORK 0
 # define RIGHT_FORK 1
 
-typedef unsigned int		t_philosopher_state;
-typedef unsigned int		t_simulation_state;
-typedef unsigned int		t_fork_side;
+typedef unsigned char		t_bool;
+typedef unsigned char		t_philosopher_state;
+typedef unsigned char		t_simulation_state;
+typedef unsigned char		t_fork_side;
 typedef long int			t_timestamp;
 typedef struct s_simulation	t_simulation;
 
@@ -63,11 +66,14 @@ typedef struct s_philosopher
 	t_timestamp				last_sleeping_time;
 	t_lock					last_sleeping_time_lock;
 	t_simulation			*simulation;
+	unsigned int			meal_count;
+	t_lock					meal_count_lock;
 }							t_philosopher;
 
 typedef struct s_fork
 {
 	t_lock					lock;
+	t_bool					is_available;
 }							t_fork;
 
 typedef struct s_simulation
@@ -78,6 +84,7 @@ typedef struct s_simulation
 	unsigned int			time_to_die;
 	unsigned int			time_to_eat;
 	unsigned int			time_to_sleep;
+	t_bool					has_number_of_times_each_philosopher_must_eat;
 	unsigned int			number_of_times_each_philosopher_must_eat;
 	t_timestamp				start_time;
 	t_lock					printf_lock;
@@ -92,6 +99,7 @@ int							simulation_init(int argc, char **argv,
 								t_simulation *simulation);
 void						wait_simulation_starts(t_simulation *simulation);
 void						wait_simulation_ends(t_simulation *simulation);
+void						handle_end_simulation(t_simulation *simulation);
 void						simulation_cleanup(t_simulation *simulation);
 
 void						*philosopher_routine(void *data);
@@ -112,6 +120,11 @@ void						set_philosopher_last_eating_time(t_philosopher *philosopher,
 t_timestamp					get_philosopher_last_sleeping_time(t_philosopher *philosopher);
 void						set_philosopher_last_sleeping_time(t_philosopher *philosopher,
 								t_timestamp last_sleeping_time);
+unsigned int				get_philosopher_meal_count(t_philosopher *philosopher);
+void						incr_philosopher_meal_count(t_philosopher *philosopher);
+t_bool						get_fork_availability(t_fork *fork);
+void						set_fork_availability(t_fork *fork,
+								t_bool is_available);
 
 t_timestamp					get_current_time(void);
 

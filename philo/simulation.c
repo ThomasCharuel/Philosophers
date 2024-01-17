@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 17:05:17 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:25:09 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	forks_init(t_simulation *simulation)
 	i = 0;
 	while (i < simulation->number_of_philosophers)
 	{
+		simulation->forks[i].is_available = TRUE;
 		if (init_lock(&(simulation->forks[i].lock)) == ERROR)
 			return (ERROR);
 		i++;
@@ -43,10 +44,12 @@ int	philosopher_init(t_simulation *simulation)
 	{
 		simulation->philosophers[i].id = i + 1;
 		simulation->philosophers[i].state = PHILOSOPHER_INITIALIZED;
+		simulation->philosophers[i].meal_count = 0;
 		simulation->philosophers[i].simulation = simulation;
 		init_lock(&(simulation->philosophers[i].state_lock)); // TO protect
 		init_lock(&(simulation->philosophers[i].last_eating_time_lock));
 		init_lock(&(simulation->philosophers[i].last_sleeping_time_lock));
+		init_lock(&(simulation->philosophers[i].meal_count_lock));
 		pthread_create(&(simulation->philosophers[i].tid), NULL,
 			philosopher_routine, &(simulation->philosophers[i]));
 		i++;
@@ -63,9 +66,12 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 	simulation->time_to_eat = ft_atoui(argv[3]);
 	simulation->time_to_sleep = ft_atoui(argv[4]);
 	if (argc == 5)
-		simulation->number_of_times_each_philosopher_must_eat = 0;
+		simulation->has_number_of_times_each_philosopher_must_eat = FALSE;
 	else
+	{
+		simulation->has_number_of_times_each_philosopher_must_eat = TRUE;
 		simulation->number_of_times_each_philosopher_must_eat = ft_atoui(argv[5]);
+	}
 	if (init_lock(&(simulation->state_lock)) == ERROR
 		|| init_lock(&(simulation->printf_lock)) == ERROR
 		|| forks_init(simulation) == ERROR
@@ -98,8 +104,22 @@ void	wait_simulation_starts(t_simulation *simulation)
 	set_simulation_state(simulation, SIMULATION_RUNNING);
 }
 
+void	handle_end_simulation(t_simulation *simulation)
+{
+	size_t	i;
+
+	set_simulation_state(simulation, SIMULATION_ENDED);
+	i = 0;
+	while (i < simulation->number_of_philosophers)
+	{
+		pthread_join(simulation->philosophers[i].tid, NULL);
+		i++;
+	}
+}
+
 void	wait_simulation_ends(t_simulation *simulation)
 {
+	t_bool		has_enough_meal;
 	size_t		i;
 	t_timestamp	current_time;
 
@@ -107,8 +127,10 @@ void	wait_simulation_ends(t_simulation *simulation)
 	{
 		i = 0;
 		current_time = get_current_time();
+		has_enough_meal = simulation->has_number_of_times_each_philosopher_must_eat;
 		while (i < simulation->number_of_philosophers)
 		{
+			has_enough_meal &= (simulation->philosophers[i].meal_count >= simulation->number_of_times_each_philosopher_must_eat);
 			if (current_time
 				- get_philosopher_last_eating_time(&simulation->philosophers[i]) > simulation->time_to_die)
 			{
@@ -116,17 +138,12 @@ void	wait_simulation_ends(t_simulation *simulation)
 					PHILOSOPHER_IS_DEAD);
 				log_action(current_time, PHILOSOPHER_DIES,
 					&simulation->philosophers[i]);
-				set_simulation_state(simulation, SIMULATION_ENDED);
-				i = 0;
-				while (i < simulation->number_of_philosophers)
-				{
-					pthread_join(simulation->philosophers[i].tid, NULL);
-					i++;
-				}
 				return ;
 			}
 			i++;
 		}
+		if (has_enough_meal)
+			return ;
 		usleep(10);
 	}
 }
@@ -156,6 +173,7 @@ void	simulation_cleanup(t_simulation *simulation)
 			pthread_mutex_destroy(&(simulation->philosophers[i].state_lock.mutex));
 			pthread_mutex_destroy(&(simulation->philosophers[i].last_eating_time_lock.mutex));
 			pthread_mutex_destroy(&(simulation->philosophers[i].last_sleeping_time_lock.mutex));
+			pthread_mutex_destroy(&(simulation->philosophers[i].meal_count_lock.mutex));
 			i++;
 		}
 		free(simulation->philosophers);

@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/16 22:19:01 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:18:37 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int	main(int argc, char **argv)
 		}
 		wait_simulation_starts(&simulation);
 		wait_simulation_ends(&simulation);
+		handle_end_simulation(&simulation);
 		simulation_cleanup(&simulation);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:20:06 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 17:04:20 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 20:14:58 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,38 @@ void	set_philosopher_last_sleeping_time(t_philosopher *philosopher,
 	lock(&philosopher->last_sleeping_time_lock);
 	philosopher->last_sleeping_time = last_sleeping_time;
 	unlock(&philosopher->last_sleeping_time_lock);
+}
+
+unsigned int	get_philosopher_meal_count(t_philosopher *philosopher)
+{
+	unsigned int	meal_count;
+
+	lock(&philosopher->meal_count_lock);
+	meal_count = philosopher->meal_count;
+	unlock(&philosopher->meal_count_lock);
+	return (meal_count);
+}
+
+void	incr_philosopher_meal_count(t_philosopher *philosopher)
+{
+	lock(&philosopher->meal_count_lock);
+	philosopher->meal_count++;
+	unlock(&philosopher->meal_count_lock);
+}
+
+t_bool	get_fork_availability(t_fork *fork)
+{
+	t_bool	is_available;
+
+	lock(&fork->lock);
+	is_available = fork->is_available;
+	unlock(&fork->lock);
+	return (is_available);
+}
+
+void	set_fork_availability(t_fork *fork, t_bool is_available)
+{
+	lock(&fork->lock);
+	fork->is_available = is_available;
+	unlock(&fork->lock);
 }
