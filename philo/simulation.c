@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:38:29 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 17:05:17 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	philosopher_init(t_simulation *simulation)
 		simulation->philosophers[i].simulation = simulation;
 		init_lock(&(simulation->philosophers[i].state_lock)); // TO protect
 		init_lock(&(simulation->philosophers[i].last_eating_time_lock));
+		init_lock(&(simulation->philosophers[i].last_sleeping_time_lock));
 		pthread_create(&(simulation->philosophers[i].tid), NULL,
 			philosopher_routine, &(simulation->philosophers[i]));
 		i++;
@@ -154,6 +155,7 @@ void	simulation_cleanup(t_simulation *simulation)
 		{
 			pthread_mutex_destroy(&(simulation->philosophers[i].state_lock.mutex));
 			pthread_mutex_destroy(&(simulation->philosophers[i].last_eating_time_lock.mutex));
+			pthread_mutex_destroy(&(simulation->philosophers[i].last_sleeping_time_lock.mutex));
 			i++;
 		}
 		free(simulation->philosophers);

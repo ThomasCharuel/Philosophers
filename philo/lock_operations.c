@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:20:06 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:32:42 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 17:04:20 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,22 @@ void	set_philosopher_last_eating_time(t_philosopher *philosopher,
 	lock(&philosopher->last_eating_time_lock);
 	philosopher->last_eating_time = last_eating_time;
 	unlock(&philosopher->last_eating_time_lock);
+}
+
+t_timestamp	get_philosopher_last_sleeping_time(t_philosopher *philosopher)
+{
+	t_timestamp	last_sleeping_time;
+
+	lock(&philosopher->last_sleeping_time_lock);
+	last_sleeping_time = philosopher->last_sleeping_time;
+	unlock(&philosopher->last_sleeping_time_lock);
+	return (last_sleeping_time);
+}
+
+void	set_philosopher_last_sleeping_time(t_philosopher *philosopher,
+		t_timestamp last_sleeping_time)
+{
+	lock(&philosopher->last_sleeping_time_lock);
+	philosopher->last_sleeping_time = last_sleeping_time;
+	unlock(&philosopher->last_sleeping_time_lock);
 }

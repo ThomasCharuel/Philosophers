@@ -1,2 +1,2 @@
-clear && make re && valgrind --tool=helgrind ./philo 4 410 200 200
-# make && ./philo 2 40 41 42 8
+clear && make re && valgrind --tool=drd ./philo 4 410 200 100
+# clear && make re && ./philo 4 410 200 200

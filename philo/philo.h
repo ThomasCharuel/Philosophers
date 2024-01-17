@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:28:50 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 17:04:40 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ typedef struct s_philosopher
 	t_lock					state_lock;
 	t_timestamp				last_eating_time;
 	t_lock					last_eating_time_lock;
+	t_timestamp				last_sleeping_time;
+	t_lock					last_sleeping_time_lock;
 	t_simulation			*simulation;
 }							t_philosopher;
 
@@ -107,6 +109,9 @@ void						set_philosopher_state(t_philosopher *philosopher,
 t_timestamp					get_philosopher_last_eating_time(t_philosopher *philosopher);
 void						set_philosopher_last_eating_time(t_philosopher *philosopher,
 								t_timestamp last_eating_time);
+t_timestamp					get_philosopher_last_sleeping_time(t_philosopher *philosopher);
+void						set_philosopher_last_sleeping_time(t_philosopher *philosopher,
+								t_timestamp last_sleeping_time);
 
 t_timestamp					get_current_time(void);
 

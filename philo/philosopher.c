@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:43:44 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 17:06:25 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	philosopher_releases_forks(t_philosopher *philosopher)
 		% philosopher->simulation->number_of_philosophers].lock);
 }
 
-void	philosopher_is_eating(t_philosopher *philosopher)
+void	handle_philosopher_eating(t_philosopher *philosopher)
 {
 	t_timestamp	current_time;
 	t_timestamp	last_eating_time;
@@ -63,7 +63,29 @@ void	philosopher_is_eating(t_philosopher *philosopher)
 			- last_eating_time > philosopher->simulation->time_to_eat)
 		{
 			set_philosopher_state(philosopher, PHILOSOPHER_IS_SLEEPING);
+			set_philosopher_last_sleeping_time(philosopher, current_time);
 			log_action(current_time, PHILOSOPHER_STARTS_SLEEPING, philosopher);
+			return ;
+		}
+		usleep(10);
+	}
+}
+
+void	handle_philosopher_sleeping(t_philosopher *philosopher)
+{
+	t_timestamp	current_time;
+	t_timestamp	last_sleeping_time;
+
+	last_sleeping_time = get_philosopher_last_sleeping_time(philosopher);
+	while (get_philosopher_state(philosopher) == PHILOSOPHER_IS_SLEEPING
+		&& get_simulation_state(philosopher->simulation) != SIMULATION_ENDED)
+	{
+		current_time = get_current_time();
+		if (current_time
+			- last_sleeping_time > philosopher->simulation->time_to_sleep)
+		{
+			set_philosopher_state(philosopher, PHILOSOPHER_IS_THINKING);
+			log_action(current_time, PHILOSOPHER_STARTS_THINKING, philosopher);
 			return ;
 		}
 		usleep(10);
@@ -84,9 +106,10 @@ void	*philosopher_routine(void *data)
 		{
 			philosopher_takes_fork(philosopher, philosopher->id % 2);
 			philosopher_takes_fork(philosopher, (philosopher->id + 1) % 2);
-			philosopher_is_eating(philosopher);
+			handle_philosopher_eating(philosopher);
 			philosopher_releases_forks(philosopher);
 		}
+		handle_philosopher_sleeping(philosopher);
 		usleep(10);
 	}
 	return (NULL);
