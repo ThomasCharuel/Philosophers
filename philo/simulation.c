@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:33:47 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:38:29 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ void	wait_simulation_ends(t_simulation *simulation)
 			}
 			i++;
 		}
+		usleep(10);
 	}
 }
 

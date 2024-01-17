@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 16:30:48 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/17 16:43:44 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	philosopher_takes_fork(t_philosopher *philosopher,
 		{
 			set_philosopher_last_eating_time(philosopher, action_time);
 			philosopher->state = PHILOSOPHER_IS_EATING;
-			log_action(action_time, PHILOSOPHER_IS_EATING, philosopher);
+			log_action(action_time, PHILOSOPHER_STARTS_EATING, philosopher);
 		}
 		else if (fork_side == LEFT_FORK)
 			philosopher->state = PHILOSOPHER_HAS_LEFT_FORK;
@@ -55,7 +55,8 @@ void	philosopher_is_eating(t_philosopher *philosopher)
 	t_timestamp	last_eating_time;
 
 	last_eating_time = get_philosopher_last_eating_time(philosopher);
-	while (get_philosopher_state(philosopher) == PHILOSOPHER_IS_EATING)
+	while (get_philosopher_state(philosopher) == PHILOSOPHER_IS_EATING
+		&& get_simulation_state(philosopher->simulation) != SIMULATION_ENDED)
 	{
 		current_time = get_current_time();
 		if (current_time
@@ -63,7 +64,7 @@ void	philosopher_is_eating(t_philosopher *philosopher)
 		{
 			set_philosopher_state(philosopher, PHILOSOPHER_IS_SLEEPING);
 			log_action(current_time, PHILOSOPHER_STARTS_SLEEPING, philosopher);
-			break ;
+			return ;
 		}
 		usleep(10);
 	}
