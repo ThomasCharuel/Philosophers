@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 14:39:19 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/18 15:48:27 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 	t_timestamp	action_time;
 	t_fork		*fork;
 
+	action_time = get_current_time();
 	lock(&philosopher->state_lock);
 	if ((philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2) || (philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id % 2 == 0))
 		fork = get_right_fork(philosopher);
@@ -51,7 +52,6 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 	}
 	fork->is_available = FALSE;
 	unlock(&fork->lock);
-	action_time = get_current_time();
 	log_action(action_time, PHILOSOPHER_TAKES_FORK, philosopher);
 	if (philosopher->state == PHILOSOPHER_IS_THINKING)
 		philosopher->state = PHILOSOPHER_HAS_ONE_FORK;
@@ -94,7 +94,7 @@ void	handle_philosopher_eating(t_philosopher *philosopher)
 	{
 		current_time = get_current_time();
 		if (current_time
-			- last_eating_time > philosopher->simulation->time_to_eat)
+			- last_eating_time >= philosopher->simulation->time_to_eat)
 		{
 			philosopher_releases_forks(philosopher);
 			set_philosopher_state(philosopher, PHILOSOPHER_IS_SLEEPING);
@@ -117,7 +117,7 @@ void	handle_philosopher_sleeping(t_philosopher *philosopher)
 	{
 		current_time = get_current_time();
 		if (current_time
-			- last_sleeping_time > philosopher->simulation->time_to_sleep)
+			- last_sleeping_time >= philosopher->simulation->time_to_sleep)
 		{
 			set_philosopher_state(philosopher, PHILOSOPHER_IS_THINKING);
 			log_action(current_time, PHILOSOPHER_STARTS_THINKING, philosopher);

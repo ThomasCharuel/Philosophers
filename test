@@ -1,0 +1,36 @@
+
+1705584840703 Philo 1 tries left fork (0)
+9850 3 is sleeping
+1705584840704 Philo 1 tries left fork (0)
+9850 1 has taken a fork
+9850 1 is eating
+9850 2 is thinking
+1705584840704 Philo 2 tries left fork (1)
+
+1705584840904 Philo 2 tries left fork (1)
+10051 3 is thinking
+10051 1 is sleeping
+1705584840905 Philo 2 tries left fork (1)
+10051 2 has taken a fork
+1705584840905 Philo 3 tries right fork (0)
+10051 3 has taken a fork
+1705584840905 Philo 3 tries left fork (2)
+10051 3 has taken a fork
+10051 3 is eating
+1705584840905 Philo 2 tries right fork (2)
+
+1705584841102 Philo 2 tries right fork (2)
+10249 2 died
+
+
+Pour ./philo 3 800 200 200
+
+Philo 1:
+	Fork 1
+	Fork 0
+Philo 2:
+	Fork 1
+	Fork 2
+Philo 3:
+	Fork 0
+	Fork 2
