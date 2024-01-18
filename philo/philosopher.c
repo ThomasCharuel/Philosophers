@@ -6,46 +6,62 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 12:01:49 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/18 14:39:19 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+t_fork *get_left_fork(t_philosopher *philosopher)
+{
+	t_fork *fork;
+
+	fork = &(philosopher->simulation->forks[philosopher->id - 1]);
+	return (fork);
+}
+
+t_fork *get_right_fork(t_philosopher *philosopher)
+{
+	t_fork *fork;
+
+	fork = &(philosopher->simulation->forks[philosopher->id % philosopher->simulation->number_of_philosophers]);
+	return (fork);
+}
+
 void	philosopher_tries_forks(t_philosopher *philosopher)
 {
-	// t_timestamp	action_time;
+	t_timestamp	action_time;
 	t_fork		*fork;
 
 	lock(&philosopher->state_lock);
-	if (philosopher->state == PHILOSOPHER_IS_THINKING)
-		fork = &(philosopher->simulation->forks[philosopher->id - (philosopher->id % 2)]);
-	else if (philosopher->state == PHILOSOPHER_HAS_ONE_FORK)
-		fork = &(philosopher->simulation->forks[philosopher->id - ((philosopher->id + 1) % 2)]);
+	if ((philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2) || (philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id % 2 == 0))
+		fork = get_right_fork(philosopher);
+	else if ((philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id % 2) || (philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2 == 0))
+		fork = get_left_fork(philosopher);
 	else
 	{
 		unlock(&philosopher->state_lock);
 		return ;
 	}
 	lock(&fork->lock);
-	// if (!fork->is_available) {
-	// 	unlock(&philosopher->state_lock);
-	// 	unlock(&fork->lock);
-	// 	return ;
-	// }
-	// fork->is_available = FALSE;
+	if (!fork->is_available) {
+		unlock(&philosopher->state_lock);
+		unlock(&fork->lock);
+		return ;
+	}
+	fork->is_available = FALSE;
 	unlock(&fork->lock);
-	// action_time = get_current_time();
-	// log_action(action_time, PHILOSOPHER_TAKES_FORK, philosopher);
-	// if (philosopher->state == PHILOSOPHER_IS_THINKING)
-	// 	philosopher->state = PHILOSOPHER_HAS_ONE_FORK;
-	// else {
-	// 	set_philosopher_last_eating_time(philosopher, action_time);
-	// 	philosopher->state = PHILOSOPHER_IS_EATING;
-	// 	log_action(action_time, PHILOSOPHER_STARTS_EATING, philosopher);
-	// 	if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
-	// 		incr_philosopher_meal_count(philosopher);
-	// }
+	action_time = get_current_time();
+	log_action(action_time, PHILOSOPHER_TAKES_FORK, philosopher);
+	if (philosopher->state == PHILOSOPHER_IS_THINKING)
+		philosopher->state = PHILOSOPHER_HAS_ONE_FORK;
+	else {
+		set_philosopher_last_eating_time(philosopher, action_time);
+		philosopher->state = PHILOSOPHER_IS_EATING;
+		log_action(action_time, PHILOSOPHER_STARTS_EATING, philosopher);
+		if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
+			incr_philosopher_meal_count(philosopher);
+	}
 	unlock(&philosopher->state_lock);
 }
 
@@ -63,7 +79,6 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 		&& (get_philosopher_state(philosopher) == PHILOSOPHER_IS_THINKING || get_philosopher_state(philosopher) == PHILOSOPHER_HAS_ONE_FORK))
 	{
 		philosopher_tries_forks(philosopher);
-		write(1, "END ", 4);
 		usleep(10);
 	}
 }
@@ -123,8 +138,8 @@ void	*philosopher_routine(void *data)
 	while (get_simulation_state(philosopher->simulation) == SIMULATION_RUNNING)
 	{
 		handle_philosopher_thinking(philosopher);
-		// handle_philosopher_eating(philosopher);
-		// handle_philosopher_sleeping(philosopher);
+		handle_philosopher_eating(philosopher);
+		handle_philosopher_sleeping(philosopher);
 		usleep(10);
 	}
 	return (NULL);

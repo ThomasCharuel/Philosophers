@@ -6,7 +6,7 @@
 #    By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 16:06:44 by tcharuel          #+#    #+#              #
-#    Updated: 2024/01/17 16:50:13 by tcharuel         ###   ########.fr        #
+#    Updated: 2024/01/18 12:05:02 by tcharuel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = philo
 SRC_FILES = main.c parsing.c simulation.c philosopher.c lock_operations.c log.c timestamp.c
 
 CC = cc
-CFLAGS = -g3 -Wextra -Wall -Werror
+CFLAGS = -fsanitize=thread -Wextra -Wall -Werror
 RM = rm -f
 
 $(NAME): $(SRC_FILES)
