@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/17 20:18:47 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/18 11:04:32 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,30 +24,38 @@
 # define ERROR -1
 # define FALSE 0
 # define TRUE 1
-# define PHILOSOPHER_INITIALIZED 1
-# define PHILOSOPHER_IS_THINKING 2
-# define PHILOSOPHER_HAS_LEFT_FORK 21
-# define PHILOSOPHER_HAS_RIGHT_FORK 22
-# define PHILOSOPHER_IS_EATING 3
-# define PHILOSOPHER_IS_SLEEPING 4
-# define PHILOSOPHER_IS_DEAD 5
-# define PHILOSOPHER_TAKES_FORK 1
-# define PHILOSOPHER_STARTS_EATING 2
-# define PHILOSOPHER_STARTS_SLEEPING 3
-# define PHILOSOPHER_STARTS_THINKING 4
-# define PHILOSOPHER_DIES 5
-# define SIMULATION_INITIALIZING 1
-# define SIMULATION_RUNNING 2
-# define SIMULATION_ENDED 3
-# define LEFT_FORK 0
-# define RIGHT_FORK 1
 
 typedef unsigned char		t_bool;
-typedef unsigned char		t_philosopher_state;
-typedef unsigned char		t_simulation_state;
-typedef unsigned char		t_fork_side;
 typedef long int			t_timestamp;
 typedef struct s_simulation	t_simulation;
+
+typedef enum e_philosopher_action {
+	PHILOSOPHER_STARTS_THINKING,
+	PHILOSOPHER_TAKES_FORK,
+	PHILOSOPHER_STARTS_EATING,
+	PHILOSOPHER_STARTS_SLEEPING,
+	PHILOSOPHER_DIES,
+} t_philosopher_action;
+
+typedef enum e_philosopher_state {
+	PHILOSOPHER_INITIALIZED,
+	PHILOSOPHER_IS_THINKING,
+	PHILOSOPHER_HAS_ONE_FORK,
+	PHILOSOPHER_IS_EATING,
+	PHILOSOPHER_IS_SLEEPING,
+	PHILOSOPHER_IS_DEAD
+} t_philosopher_state;
+
+typedef enum e_simulation_state {
+	SIMULATION_INITIALIZING,
+	SIMULATION_RUNNING,
+	SIMULATION_ENDED
+} t_simulation_state;
+
+typedef enum e_fork_side {
+	LEFT,
+	RIGHT
+} t_fork_side;
 
 typedef struct s_lock
 {
@@ -128,7 +136,7 @@ void						set_fork_availability(t_fork *fork,
 
 t_timestamp					get_current_time(void);
 
-void						log_action(t_timestamp action_time,
-								int philo_action, t_philosopher *philo);
+void	log_action(t_timestamp action_time, t_philosopher_action action,
+		t_philosopher *philo);
 
 #endif
