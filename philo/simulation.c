@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 11:48:45 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/19 22:43:01 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ void	wait_simulation_ends(t_simulation *simulation)
 		has_enough_meal = simulation->has_number_of_times_each_philosopher_must_eat;
 		while (i < simulation->number_of_philosophers)
 		{
-			has_enough_meal &= (simulation->philosophers[i].meal_count >= simulation->number_of_times_each_philosopher_must_eat);
+			has_enough_meal &= (get_philosopher_meal_count(&simulation->philosophers[i]) >= simulation->number_of_times_each_philosopher_must_eat);
 			if (current_time
 				- get_philosopher_last_eating_time(&simulation->philosophers[i]) > simulation->time_to_die)
 			{
