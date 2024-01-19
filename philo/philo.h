@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 11:04:32 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/19 23:12:52 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,33 +29,37 @@ typedef unsigned char		t_bool;
 typedef long int			t_timestamp;
 typedef struct s_simulation	t_simulation;
 
-typedef enum e_philosopher_action {
+typedef enum e_philosopher_action
+{
 	PHILOSOPHER_STARTS_THINKING,
 	PHILOSOPHER_TAKES_FORK,
 	PHILOSOPHER_STARTS_EATING,
 	PHILOSOPHER_STARTS_SLEEPING,
 	PHILOSOPHER_DIES,
-} t_philosopher_action;
+}							t_philosopher_action;
 
-typedef enum e_philosopher_state {
+typedef enum e_philosopher_state
+{
 	PHILOSOPHER_INITIALIZED,
 	PHILOSOPHER_IS_THINKING,
 	PHILOSOPHER_HAS_ONE_FORK,
 	PHILOSOPHER_IS_EATING,
 	PHILOSOPHER_IS_SLEEPING,
 	PHILOSOPHER_IS_DEAD
-} t_philosopher_state;
+}							t_philosopher_state;
 
-typedef enum e_simulation_state {
+typedef enum e_simulation_state
+{
 	SIMULATION_INITIALIZING,
 	SIMULATION_RUNNING,
 	SIMULATION_ENDED
-} t_simulation_state;
+}							t_simulation_state;
 
-typedef enum e_fork_side {
+typedef enum e_fork_side
+{
 	LEFT,
 	RIGHT
-} t_fork_side;
+}							t_fork_side;
 
 typedef struct s_lock
 {
@@ -96,7 +100,6 @@ typedef struct s_simulation
 	unsigned int			number_of_times_each_philosopher_must_eat;
 	t_timestamp				start_time;
 	t_lock					printf_lock;
-	t_lock					turn;
 	t_fork					*forks;
 	t_philosopher			*philosophers;
 }							t_simulation;
@@ -136,7 +139,8 @@ void						set_fork_availability(t_fork *fork,
 
 t_timestamp					get_current_time(void);
 
-void	log_action(t_timestamp action_time, t_philosopher_action action,
-		t_philosopher *philo);
+void						log_action(t_timestamp action_time,
+								t_philosopher_action action,
+								t_philosopher *philo);
 
 #endif
