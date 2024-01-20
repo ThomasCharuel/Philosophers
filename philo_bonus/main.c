@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 12:53:39 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 12:56:30 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ void philosophers_have_eaten_enough_monitoring_routine()
 
 void wait_and_handles_simulation_ends(t_simulation *simulation)
 {
-	
+	while ()
+		thread_join()
+	if (simulation->has_number_of_times_each_philosopher_must_eat)
+		thread_join()
 }
 
 int	main(int argc, char **argv)
