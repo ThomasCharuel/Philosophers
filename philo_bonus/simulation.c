@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 10:13:51 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 12:53:28 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ int	philosopher_forks_init(t_simulation *simulation)
 
 int	simulation_init(int argc, char **argv, t_simulation *simulation)
 {
-	simulation->forks = NULL;
+	simulation->forks_pair_count = NULL;
+	simulation->philosopher_process_ready = NULL;
+	simulation->ready = NULL;
+	simulation->philosopher_have_eaten_enough = NULL;
 	simulation->philosophers_pid = NULL;
 	simulation->number_of_philosophers = ft_atoui(argv[1]);
 	simulation->time_to_die = ft_atoui(argv[2]);
@@ -48,13 +51,32 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 		simulation->has_number_of_times_each_philosopher_must_eat = TRUE;
 		simulation->number_of_times_each_philosopher_must_eat = ft_atoui(argv[5]);
 	}
-	sem_init(&simulation->state, 0, SIMULATION_INITIALIZING);
-	sem_init(&simulation->forks, 0, simulation->number_of_philosophers);
+	simulation->forks_pair_count = sem_open(0, O_CREAT, NULL, simulation->number_of_philosophers / 2);
+	if (simulation->forks_pair_count == SEM_FAILED)
+		return (ERROR);
+	simulation->philosopher_process_ready = sem_open(0, O_CREAT, NULL, 0);
+	if (simulation->philosopher_process_ready == SEM_FAILED)
+		return (ERROR);
+	simulation->ready = sem_open(0, O_CREAT, NULL, 0);
+	if (simulation->ready == SEM_FAILED)
+		return (ERROR);
+	if (simulation->has_number_of_times_each_philosopher_must_eat)
+	{
+		simulation->philosopher_have_eaten_enough = sem_open(0, O_CREAT, NULL, 0);
+		if (simulation->philosopher_have_eaten_enough == SEM_FAILED)
+			return (ERROR);
+	}
 	return (philosopher_forks_init(simulation));
 }
 
 void	simulation_cleanup(t_simulation *simulation)
 {
-	sem_close(&simulation->state);
-	sem_close(&simulation->forks);
+	if (simulation->forks_pair_count)
+		sem_close(&simulation->forks_pair_count);
+	if (simulation->philosopher_process_ready)
+		sem_close(&simulation->philosopher_process_ready);
+	if (simulation->ready)
+		sem_close(&simulation->ready);
+	if (simulation->philosopher_have_eaten_enough)
+		sem_close(&simulation->philosopher_have_eaten_enough);
 }
