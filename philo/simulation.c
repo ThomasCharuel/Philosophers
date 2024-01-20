@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/19 22:43:01 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 18:52:50 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,7 @@ void	handle_end_simulation(t_simulation *simulation)
 	set_simulation_state(simulation, SIMULATION_ENDED);
 	i = 0;
 	while (i < simulation->number_of_philosophers)
-	{
-		pthread_join(simulation->philosophers[i].tid, NULL);
-		i++;
-	}
+		pthread_join(simulation->philosophers[i++].tid, NULL);
 }
 
 void	wait_simulation_ends(t_simulation *simulation)

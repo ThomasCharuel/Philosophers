@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 12:56:30 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 18:54:11 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,49 +15,62 @@
 void wait_simulation_starts(t_simulation *simulation)
 {
 	unsigned int	i;
-
+	
 	i = 0;
-	while (i++ < simulation->number_of_philosophers)
+	while (i < simulation->number_of_philosophers)
+	{
 		sem_wait(simulation->philosopher_process_ready);
+		pthread_create(&(simulation->philosophers_monitoring_data[i].tid), NULL,
+			philosopher_monitoring_routine, &(simulation->philosophers_monitoring_data[i]));
+		i++;
+	}
+	if (simulation->has_number_of_times_each_philosopher_must_eat)
+		pthread_create(&(simulation->philosophers_have_eaten_enough_monitoring_tid), NULL,
+			philosophers_have_eaten_enough_monitoring_routine, &(simulation));
 	i = 0;
 	while (i++ < simulation->number_of_philosophers)
 		sem_post(simulation->philosopher_process_ready);
 }
 
-void	philosopher_process_monitoring_routine()
+void	philosopher_monitoring_routine(void *data)
 {
 	unsigned int	i;
-	t_simulation *simulation;
+	t_monitoring_philosopher_data *monitoring_data;
 
-	waitpid(pid);
+	monitoring_data = (t_monitoring_philosopher_data *)data;
+	waitpid(monitoring_data->philosopher_pid);
 	i = 0;
-	while (i < simulation->number_of_philosophers)
+	while (i < monitoring_data->simulation->number_of_philosophers)
 	{
-		if (simulation->philosophers_pid[i] != pid)
-			kill(simulation->philosophers_pid[i]);
+		if (monitoring_data->simulation->philosophers_monitoring_data[i].philosopher_pid != monitoring_data->philosopher_pid)
+			kill(monitoring_data->simulation->philosophers_monitoring_data[i].philosopher_pid);
 		i++;
 	}
 }
 
-void philosophers_have_eaten_enough_monitoring_routine()
+void philosophers_have_eaten_enough_monitoring_routine(void *data)
 {
 	unsigned int	i;
 	t_simulation *simulation;
 	
-	i++;
+	simulation = (t_simulation *)data;
+	i = 0;
 	while (i++ < simulation->number_of_philosophers)
 		sem_wait(simulation->philosopher_have_eaten_enough);
 	i = 0;
-	while (i++ < simulation->number_of_philosophers)
-		kill(simulation->philosophers_pid[i]);
+	while (i < simulation->number_of_philosophers)
+		kill(simulation->philosophers_monitoring_data[i++].philosopher_pid);
 }
 
-void wait_and_handles_simulation_ends(t_simulation *simulation)
+void wait_simulation_ends(t_simulation *simulation)
 {
-	while ()
-		thread_join()
+	unsigned int	i;
+
+	i = 0;
+	while(waitpid(simulation->philosophers_monitoring_data[i].philosopher_pid))
+		pthread_join(simulation->philosophers_monitoring_data[i++].tid, NULL);
 	if (simulation->has_number_of_times_each_philosopher_must_eat)
-		thread_join()
+		pthread_join(simulation->philosophers_have_eaten_enough_monitoring_tid, NULL);
 }
 
 int	main(int argc, char **argv)
@@ -72,7 +85,7 @@ int	main(int argc, char **argv)
 			return (0);
 		}
 		wait_simulation_starts(&simulation);
-		wait_and_handles_simulation_ends(&simulation);
+		wait_simulation_ends(&simulation);
 		simulation_cleanup(&simulation);
 	}
 	return (0);

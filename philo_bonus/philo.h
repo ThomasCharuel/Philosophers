@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 12:53:30 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 18:49:06 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 typedef unsigned char		t_bool;
 typedef long int			t_timestamp;
+typedef struct	s_monitoring_philosopher_data t_monitoring_philosopher_data;
 
 typedef enum e_philosopher_action
 {
@@ -69,8 +70,16 @@ typedef struct s_simulation
 	sem_t				*philosopher_process_ready;
 	sem_t				*ready;
 	sem_t				*philosopher_have_eaten_enough;
-	pid_t				*philosophers_pid;
+	t_monitoring_philosopher_data	*philosophers_monitoring_data;
+	pthread_t 			philosophers_have_eaten_enough_monitoring_tid;
 }						t_simulation;
+
+typedef struct	s_monitoring_philosopher_data
+{
+	pthread_t tid;
+	pid_t philosopher_pid;
+	t_simulation *simulation;
+} t_monitoring_philosopher_data;
 
 typedef struct s_philosopher
 {
