@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 10:09:23 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/20 10:13:51 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,6 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 
 void	simulation_cleanup(t_simulation *simulation)
 {
-	sem_destroy(&simulation->state);
-	sem_destroy(&simulation->forks);
+	sem_close(&simulation->state);
+	sem_close(&simulation->forks);
 }
