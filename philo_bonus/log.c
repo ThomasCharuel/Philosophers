@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 11:58:51 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:26:01 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,8 @@ void	log_action(t_timestamp action_time, t_philosopher_action action,
 	t_timestamp	ms_since_start;
 
 	ms_since_start = action_time - philo->start_time;
-	if (action == PHILOSOPHER_TAKES_FORK)
-		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
-	else if (action == PHILOSOPHER_STARTS_EATING)
+	sem_wait(philo->simulation->is_running);
+	if (action == PHILOSOPHER_STARTS_EATING)
 	{
 		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
 		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
@@ -32,4 +31,5 @@ void	log_action(t_timestamp action_time, t_philosopher_action action,
 		printf("%ld %u is thinking\n", ms_since_start, philo->id);
 	else if (action == PHILOSOPHER_DIES)
 		printf("%ld %u died\n", ms_since_start, philo->id);
+	sem_post(philo->simulation->is_running);
 }

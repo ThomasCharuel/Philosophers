@@ -6,25 +6,31 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 12:27:35 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 15:07:49 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_bool	check_philosopher_is_alive(t_philosopher *philosopher)
+void	*check_philosopher_alive_routine(void *data)
 {
-	t_timestamp	current_time;
+	t_philosopher	*philosopher;
+	t_timestamp		current_time;
 
-	current_time = get_current_time();
-	if (current_time
-		- philosopher->last_eating_time > philosopher->simulation->time_to_die)
+	philosopher = (t_philosopher *)data;
+	while (TRUE)
 	{
-		log_action(current_time, PHILOSOPHER_DIES, philosopher);
-		simulation_cleanup(philosopher->simulation);
-		exit(EXIT_SUCCESS);
+		current_time = get_current_time();
+		if (current_time
+			- philosopher->last_eating_time > philosopher->simulation->time_to_die)
+		{
+			log_action(current_time, PHILOSOPHER_DIES, philosopher);
+			sem_wait(philosopher->simulation->is_running);
+			sem_post(philosopher->simulation->has_ended);
+		}
+		usleep(10);
 	}
-	return (TRUE);
+	return (NULL);
 }
 
 void	handle_philosopher_thinking(t_philosopher *philosopher)
@@ -33,7 +39,6 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 
 	sem_wait(philosopher->simulation->forks_pair_count);
 	current_time = get_current_time();
-	check_philosopher_is_alive(philosopher);
 	philosopher->last_eating_time = current_time;
 	philosopher->state = PHILOSOPHER_IS_EATING;
 	log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
@@ -77,6 +82,7 @@ void	philosopher_routine(t_simulation *simulation,
 		unsigned int philosopher_id)
 {
 	t_philosopher	philosopher;
+	pthread_t		monitoring_thread;
 
 	philosopher.simulation = simulation;
 	philosopher.id = philosopher_id;
@@ -88,16 +94,18 @@ void	philosopher_routine(t_simulation *simulation,
 	philosopher.state = PHILOSOPHER_IS_THINKING;
 	log_action(philosopher.start_time, PHILOSOPHER_STARTS_THINKING,
 		&philosopher);
+	pthread_create(&monitoring_thread, NULL, &check_philosopher_alive_routine,
+		&philosopher);
+	pthread_detach(monitoring_thread);
 	while (TRUE)
 	{
 		if (philosopher.state == PHILOSOPHER_IS_THINKING
-			&& simulation->number_of_philosophers > 1)
+			&& simulation->philosophers_count > 1)
 			handle_philosopher_thinking(&philosopher);
 		if (philosopher.state == PHILOSOPHER_IS_EATING)
 			handle_philosopher_eating(&philosopher);
 		if (philosopher.state == PHILOSOPHER_IS_SLEEPING)
 			handle_philosopher_sleeping(&philosopher);
-		check_philosopher_is_alive(&philosopher);
 		usleep(10);
 	}
 }

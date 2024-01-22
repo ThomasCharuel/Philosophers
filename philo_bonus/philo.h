@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 10:32:45 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:56:01 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@
 # define FORKS_PAIR_COUNT_SEM "/forks_pair_count"
 # define PHILOSOPHER_PROCESS_READY_SEM "/philosopher_process_ready"
 # define READY_SEM "/ready"
+# define IS_RUNNING_SEM "/is_running"
+# define HAS_ENDED_SEM "/has_ended"
 # define PHILOSOPHER_HAVE_EATEN_ENOUGH_SEM "/philosopher_have_eaten_enough"
 
-typedef unsigned char							t_bool;
-typedef long int								t_timestamp;
-typedef struct s_monitoring_philosopher_data	t_monitoring_philosopher_data;
+typedef unsigned char	t_bool;
+typedef long int		t_timestamp;
 
 typedef enum e_philosopher_action
 {
@@ -45,7 +46,7 @@ typedef enum e_philosopher_action
 	PHILOSOPHER_STARTS_EATING,
 	PHILOSOPHER_STARTS_SLEEPING,
 	PHILOSOPHER_DIES,
-}												t_philosopher_action;
+}						t_philosopher_action;
 
 typedef enum e_philosopher_state
 {
@@ -55,63 +56,56 @@ typedef enum e_philosopher_state
 	PHILOSOPHER_IS_EATING,
 	PHILOSOPHER_IS_SLEEPING,
 	PHILOSOPHER_IS_DEAD
-}												t_philosopher_state;
+}						t_philosopher_state;
 
 typedef enum e_simulation_state
 {
 	SIMULATION_INITIALIZING = 1,
 	SIMULATION_RUNNING = 2,
 	SIMULATION_ENDED = 3
-}												t_simulation_state;
+}						t_simulation_state;
 
 typedef struct s_simulation
 {
-	unsigned int								number_of_philosophers;
-	unsigned int								time_to_die;
-	unsigned int								time_to_eat;
-	unsigned int								time_to_sleep;
-	t_bool										has_number_of_times_each_philosopher_must_eat;
-	unsigned int								number_of_times_each_philosopher_must_eat;
-	sem_t										*forks_pair_count;
-	sem_t										*philosopher_process_ready;
-	sem_t										*ready;
-	sem_t										*philosopher_have_eaten_enough;
-	t_monitoring_philosopher_data				*philosophers_monitoring_data;
-	pthread_t									philosophers_have_eaten_enough_monitoring_tid;
-}												t_simulation;
-
-typedef struct s_monitoring_philosopher_data
-{
-	pthread_t									tid;
-	pid_t										philosopher_pid;
-	t_simulation								*simulation;
-}												t_monitoring_philosopher_data;
+	unsigned int		philosophers_count;
+	unsigned int		time_to_die;
+	unsigned int		time_to_eat;
+	unsigned int		time_to_sleep;
+	t_bool				has_number_of_times_each_philosopher_must_eat;
+	unsigned int		number_of_times_each_philosopher_must_eat;
+	sem_t				*forks_pair_count;
+	sem_t				*philosopher_process_ready;
+	sem_t				*ready;
+	sem_t				*is_running;
+	sem_t				*has_ended;
+	sem_t				*philosopher_have_eaten_enough;
+	pid_t				*philosopher_pids;
+	pthread_t			philosophers_have_eaten_enough_monitoring_tid;
+}						t_simulation;
 
 typedef struct s_philosopher
 {
-	unsigned int								id;
-	t_philosopher_state							state;
-	t_timestamp									start_time;
-	t_timestamp									last_eating_time;
-	t_timestamp									last_sleeping_time;
-	t_simulation								*simulation;
-	unsigned int								meal_count;
-}												t_philosopher;
+	unsigned int		id;
+	t_philosopher_state	state;
+	t_timestamp			start_time;
+	t_timestamp			last_eating_time;
+	t_timestamp			last_sleeping_time;
+	t_simulation		*simulation;
+	unsigned int		meal_count;
+}						t_philosopher;
 
-unsigned int									ft_atoui(char *s);
+unsigned int			ft_atoui(char *s);
 
-int												simulation_init(int argc,
-													char **argv,
-													t_simulation *simulation);
-void											simulation_cleanup(t_simulation *simulation);
+int						simulation_init(int argc, char **argv,
+							t_simulation *simulation);
+void					simulation_cleanup(t_simulation *simulation);
 
-void											philosopher_routine(t_simulation *simulation,
-													unsigned int philosopher_id);
+void					philosopher_routine(t_simulation *simulation,
+							unsigned int philosopher_id);
 
-t_timestamp										get_current_time(void);
+t_timestamp				get_current_time(void);
 
-void											log_action(t_timestamp action_time,
-													t_philosopher_action action,
-													t_philosopher *philo);
+void					log_action(t_timestamp action_time,
+							t_philosopher_action action, t_philosopher *philo);
 
 #endif
