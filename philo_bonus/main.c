@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/21 10:17:26 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:00:18 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	wait_simulation_starts(t_simulation *simulation)
 			&(simulation));
 	i = 0;
 	while (i++ < simulation->number_of_philosophers)
-		sem_post(simulation->philosopher_process_ready);
+		sem_post(simulation->ready);
 }
 
 void	wait_simulation_ends(t_simulation *simulation)
@@ -73,9 +73,13 @@ void	wait_simulation_ends(t_simulation *simulation)
 	unsigned int	i;
 
 	i = 0;
-	while (waitpid(simulation->philosophers_monitoring_data[i].philosopher_pid,
-			NULL, 0))
-		pthread_join(simulation->philosophers_monitoring_data[i++].tid, NULL);
+	while (i < simulation->number_of_philosophers)
+	{
+		waitpid(simulation->philosophers_monitoring_data[i].philosopher_pid,
+			NULL, 0);
+		pthread_join(simulation->philosophers_monitoring_data[i].tid, NULL);
+		i++;
+	}
 	if (simulation->has_number_of_times_each_philosopher_must_eat)
 		pthread_join(simulation->philosophers_have_eaten_enough_monitoring_tid,
 			NULL);

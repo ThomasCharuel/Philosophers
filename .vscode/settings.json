@@ -3,5 +3,7 @@
     "fcntl.h": "c",
     "stat.h": "c",
     "philo.h": "c"
-  }
+  },
+  "editor.defaultFormatter": "keyhr.42-c-format",
+  "editor.formatOnSave": true
 }
