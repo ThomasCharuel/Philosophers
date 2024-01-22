@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/21 09:56:35 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:32:12 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ void	log_action(t_timestamp action_time, t_philosopher_action action,
 	if (action == PHILOSOPHER_TAKES_FORK)
 		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
 	else if (action == PHILOSOPHER_STARTS_EATING)
+	{
+		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
+		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
 		printf("%ld %u is eating\n", ms_since_start, philo->id);
+	}
 	else if (action == PHILOSOPHER_STARTS_SLEEPING)
 		printf("%ld %u is sleeping\n", ms_since_start, philo->id);
 	else if (action == PHILOSOPHER_STARTS_THINKING)
