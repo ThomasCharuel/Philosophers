@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:09:43 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 19:45:47 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:50:01 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,14 @@
 
 void	wait_simulation_starts(t_simulation *simulation)
 {
-	size_t	i;
+	size_t			i;
+	t_philosopher	*philosopher;
 
 	i = 0;
 	while (i < simulation->philosophers_count)
 	{
-		while (get_philosopher_state(&simulation->philosophers[i]) != PHILOSOPHER_IS_THINKING)
+		philosopher = &simulation->philosophers[i];
+		while (get_philosopher_state(philosopher) != PHILOSOPHER_IS_THINKING)
 			usleep(10);
 		i++;
 	}
@@ -38,14 +40,16 @@ void	wait_simulation_starts(t_simulation *simulation)
 
 t_bool	has_enough_meals_eaten(t_simulation *simulation)
 {
-	size_t	i;
+	size_t			i;
+	t_philosopher	*philosopher;
 
 	if (!simulation->has_number_of_times_each_philosopher_must_eat)
 		return (FALSE);
 	i = 0;
 	while (i < simulation->philosophers_count)
 	{
-		if (get_philosopher_meal_count(&simulation->philosophers[i]) >= simulation->min_meals)
+		philosopher = &simulation->philosophers[i];
+		if (get_philosopher_meal_count(philosopher) >= simulation->min_meals)
 			return (FALSE);
 		i++;
 	}

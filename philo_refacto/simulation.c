@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:11:27 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 19:47:00 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 19:51:57 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	philosopher_init(t_simulation *simulation)
 {
 	size_t	i;
 
-	simulation->philosophers = (t_philosopher *)malloc(simulation->philosophers_count
+	simulation->philosophers = malloc(simulation->philosophers_count
 			* sizeof(t_philosopher));
 	if (!simulation->philosophers)
 		return (ERROR);
