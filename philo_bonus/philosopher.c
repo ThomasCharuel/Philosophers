@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 10:56:47 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:15:20 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,6 @@ void	philosopher_routine(t_simulation *simulation,
 		// Do philosopher actions
 		usleep(10);
 	}
+	simulation_cleanup(simulation);
 	exit(EXIT_SUCCESS);
 }
