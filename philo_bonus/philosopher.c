@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 11:46:34 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 12:07:50 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,33 +30,47 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 {
 	t_timestamp	current_time;
 
-	if (philosopher->state == PHILOSOPHER_IS_THINKING
-		&& philosopher->simulation->number_of_philosophers > 1)
+	sem_wait(philosopher->simulation->forks_pair_count);
+	current_time = get_current_time();
+	if (!check_philosopher_is_alive(philosopher))
+		return ;
+	philosopher->last_eating_time = current_time;
+	philosopher->state = PHILOSOPHER_IS_EATING;
+	log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
+	if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
 	{
-		sem_wait(philosopher->simulation->forks_pair_count);
-		current_time = get_current_time();
-		if (!check_philosopher_is_alive(philosopher))
-			return ;
-		philosopher->last_eating_time = current_time;
-		philosopher->state = PHILOSOPHER_IS_EATING;
-		log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
-		if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
-		{
-			philosopher->meal_count++;
-			if (philosopher->meal_count == philosopher->simulation->number_of_times_each_philosopher_must_eat)
-				sem_post(philosopher->simulation->philosopher_have_eaten_enough);
-		}
+		philosopher->meal_count++;
+		if (philosopher->meal_count == philosopher->simulation->number_of_times_each_philosopher_must_eat)
+			sem_post(philosopher->simulation->philosopher_have_eaten_enough);
 	}
 }
 
 void	handle_philosopher_eating(t_philosopher *philosopher)
 {
-	(void)philosopher;
+	t_timestamp	current_time;
+
+	current_time = get_current_time();
+	if (current_time
+		- philosopher->last_eating_time >= philosopher->simulation->time_to_eat)
+	{
+		log_action(current_time, PHILOSOPHER_STARTS_SLEEPING, philosopher);
+		sem_post(philosopher->simulation->forks_pair_count);
+		philosopher->last_sleeping_time = current_time;
+		philosopher->state = PHILOSOPHER_IS_SLEEPING;
+	}
 }
 
 void	handle_philosopher_sleeping(t_philosopher *philosopher)
 {
-	(void)philosopher;
+	t_timestamp	current_time;
+
+	current_time = get_current_time();
+	if (current_time
+		- philosopher->last_sleeping_time >= philosopher->simulation->time_to_sleep)
+	{
+		log_action(current_time, PHILOSOPHER_STARTS_THINKING, philosopher);
+		philosopher->state = PHILOSOPHER_IS_THINKING;
+	}
 }
 
 void	philosopher_routine(t_simulation *simulation,
@@ -76,9 +90,13 @@ void	philosopher_routine(t_simulation *simulation,
 		&philosopher);
 	while (check_philosopher_is_alive(&philosopher))
 	{
-		handle_philosopher_thinking(&philosopher);
-		handle_philosopher_eating(&philosopher);
-		handle_philosopher_sleeping(&philosopher);
+		if (philosopher.state == PHILOSOPHER_IS_THINKING
+			&& simulation->number_of_philosophers > 1)
+			handle_philosopher_thinking(&philosopher);
+		if (philosopher.state == PHILOSOPHER_IS_EATING)
+			handle_philosopher_eating(&philosopher);
+		if (philosopher.state == PHILOSOPHER_IS_SLEEPING)
+			handle_philosopher_sleeping(&philosopher);
 		usleep(10);
 	}
 	simulation_cleanup(simulation);
