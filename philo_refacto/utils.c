@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:11:46 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 19:39:51 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:01:17 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,26 @@
 void	log_action(t_timestamp action_time, t_philosopher_action action,
 		t_philosopher *philo)
 {
-	t_timestamp	ms_since_start;
+	t_timestamp		ms_since_start;
+	t_simulation	*simulation;
 
-	ms_since_start = action_time - philo->simulation->start_time;
-	lock(&philo->simulation->printf_lock);
-	if (action == PHILOSOPHER_TAKES_FORK)
-		printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
-	else if (action == PHILOSOPHER_STARTS_EATING)
-		printf("%ld %u is eating\n", ms_since_start, philo->id);
-	else if (action == PHILOSOPHER_STARTS_SLEEPING)
-		printf("%ld %u is sleeping\n", ms_since_start, philo->id);
-	else if (action == PHILOSOPHER_STARTS_THINKING)
-		printf("%ld %u is thinking\n", ms_since_start, philo->id);
-	else if (action == PHILOSOPHER_DIES)
-		printf("%ld %u died\n", ms_since_start, philo->id);
-	unlock(&philo->simulation->printf_lock);
+	simulation = philo->simulation;
+	ms_since_start = action_time - simulation->start_time;
+	lock(&simulation->state_lock);
+	if (simulation->state != SIMULATION_ENDED)
+	{
+		if (action == PHILOSOPHER_TAKES_FORK)
+			printf("%ld %u has taken a fork\n", ms_since_start, philo->id);
+		else if (action == PHILOSOPHER_STARTS_EATING)
+			printf("%ld %u is eating\n", ms_since_start, philo->id);
+		else if (action == PHILOSOPHER_STARTS_SLEEPING)
+			printf("%ld %u is sleeping\n", ms_since_start, philo->id);
+		else if (action == PHILOSOPHER_STARTS_THINKING)
+			printf("%ld %u is thinking\n", ms_since_start, philo->id);
+		else if (action == PHILOSOPHER_DIES)
+			printf("%ld %u died\n", ms_since_start, philo->id);
+	}
+	unlock(&simulation->state_lock);
 }
 
 t_timestamp	get_current_time(void)

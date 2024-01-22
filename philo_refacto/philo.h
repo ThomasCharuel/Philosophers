@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:10:23 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 19:51:29 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:00:23 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ typedef struct s_simulation
 	t_bool					has_number_of_times_each_philosopher_must_eat;
 	unsigned int			min_meals;
 	t_timestamp				start_time;
-	t_lock					printf_lock;
 	t_lock					*forks;
 	t_philosopher			*philosophers;
 }							t_simulation;
