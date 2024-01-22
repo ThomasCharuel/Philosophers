@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 11:51:29 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 13:07:51 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,11 @@ void	*philosophers_have_eaten_enough_monitoring_routine(void *data)
 
 	simulation = (t_simulation *)data;
 	i = 0;
-	while (i++ < simulation->number_of_philosophers)
+	while (i < simulation->number_of_philosophers)
+	{
 		sem_wait(simulation->philosopher_have_eaten_enough);
+		i++;
+	}
 	i = 0;
 	while (i < simulation->number_of_philosophers)
 		kill(simulation->philosophers_monitoring_data[i++].philosopher_pid,
@@ -60,9 +63,11 @@ void	wait_simulation_starts(t_simulation *simulation)
 		i++;
 	}
 	if (simulation->has_number_of_times_each_philosopher_must_eat)
+	{
 		pthread_create(&(simulation->philosophers_have_eaten_enough_monitoring_tid),
 			NULL, philosophers_have_eaten_enough_monitoring_routine,
-			&(simulation));
+			simulation);
+	}
 	i = 0;
 	while (i++ < simulation->number_of_philosophers)
 		sem_post(simulation->ready);
@@ -81,8 +86,16 @@ void	wait_simulation_ends(t_simulation *simulation)
 		i++;
 	}
 	if (simulation->has_number_of_times_each_philosopher_must_eat)
+	{
+		i = 0;
+		while (i < simulation->number_of_philosophers)
+		{
+			sem_post(simulation->philosopher_have_eaten_enough);
+			i++;
+		}
 		pthread_join(simulation->philosophers_have_eaten_enough_monitoring_tid,
 			NULL);
+	}
 }
 
 int	main(int argc, char **argv)

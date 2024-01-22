@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 12:07:50 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 12:27:35 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ t_bool	check_philosopher_is_alive(t_philosopher *philosopher)
 		- philosopher->last_eating_time > philosopher->simulation->time_to_die)
 	{
 		log_action(current_time, PHILOSOPHER_DIES, philosopher);
-		return (FALSE);
+		simulation_cleanup(philosopher->simulation);
+		exit(EXIT_SUCCESS);
 	}
 	return (TRUE);
 }
@@ -32,8 +33,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 
 	sem_wait(philosopher->simulation->forks_pair_count);
 	current_time = get_current_time();
-	if (!check_philosopher_is_alive(philosopher))
-		return ;
+	check_philosopher_is_alive(philosopher);
 	philosopher->last_eating_time = current_time;
 	philosopher->state = PHILOSOPHER_IS_EATING;
 	log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
@@ -88,7 +88,7 @@ void	philosopher_routine(t_simulation *simulation,
 	philosopher.state = PHILOSOPHER_IS_THINKING;
 	log_action(philosopher.start_time, PHILOSOPHER_STARTS_THINKING,
 		&philosopher);
-	while (check_philosopher_is_alive(&philosopher))
+	while (TRUE)
 	{
 		if (philosopher.state == PHILOSOPHER_IS_THINKING
 			&& simulation->number_of_philosophers > 1)
@@ -97,8 +97,7 @@ void	philosopher_routine(t_simulation *simulation,
 			handle_philosopher_eating(&philosopher);
 		if (philosopher.state == PHILOSOPHER_IS_SLEEPING)
 			handle_philosopher_sleeping(&philosopher);
+		check_philosopher_is_alive(&philosopher);
 		usleep(10);
 	}
-	simulation_cleanup(simulation);
-	exit(EXIT_SUCCESS);
 }
