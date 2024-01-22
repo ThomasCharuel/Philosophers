@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:50:09 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:09:54 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	philosophers_init(t_simulation *simulation)
 		simulation->philosopher_pids[i] = fork();
 		if (simulation->philosopher_pids[i] == -1)
 		{
-			while (--i >= 0)
+			while (i-- > 0)
 				kill(simulation->philosopher_pids[i], SIGKILL);
 			free(simulation->philosopher_pids);
 			simulation->philosopher_pids = NULL;

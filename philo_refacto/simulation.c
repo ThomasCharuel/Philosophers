@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:11:27 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 20:14:48 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:09:30 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	forks_init(t_simulation *simulation)
 	{
 		if (init_lock(&simulation->forks[i]) == ERROR)
 		{
-			while (--i >= 0)
+			while (i-- > 0)
 				destroy_lock(&simulation->forks[i]);
 			free(simulation->forks);
 			simulation->forks = NULL;
@@ -63,7 +63,7 @@ int	philosopher_init(t_simulation *simulation)
 				philosopher_routine, &(simulation->philosophers[i])))
 		{
 			set_simulation_state(simulation, SIMULATION_ENDED);
-			while (--i >= 0)
+			while (i-- > 0)
 			{
 				destroy_lock(&simulation->philosophers[i].state_lock);
 				destroy_lock(&(simulation->philosophers[i].last_eating_lock));
