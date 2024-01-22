@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 12:20:06 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 10:41:10 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 18:08:42 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,21 +117,4 @@ void	incr_philosopher_meal_count(t_philosopher *philosopher)
 	lock(&philosopher->meal_count_lock);
 	philosopher->meal_count++;
 	unlock(&philosopher->meal_count_lock);
-}
-
-t_bool	get_fork_availability(t_fork *fork)
-{
-	t_bool	is_available;
-
-	lock(&fork->lock);
-	is_available = fork->is_available;
-	unlock(&fork->lock);
-	return (is_available);
-}
-
-void	set_fork_availability(t_fork *fork, t_bool is_available)
-{
-	lock(&fork->lock);
-	fork->is_available = is_available;
-	unlock(&fork->lock);
 }

@@ -6,25 +6,26 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 11:34:11 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/18 15:48:27 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 18:08:29 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_fork *get_left_fork(t_philosopher *philosopher)
+t_fork	*get_left_fork(t_philosopher *philosopher)
 {
-	t_fork *fork;
+	t_fork	*fork;
 
 	fork = &(philosopher->simulation->forks[philosopher->id - 1]);
 	return (fork);
 }
 
-t_fork *get_right_fork(t_philosopher *philosopher)
+t_fork	*get_right_fork(t_philosopher *philosopher)
 {
-	t_fork *fork;
+	t_fork	*fork;
 
-	fork = &(philosopher->simulation->forks[philosopher->id % philosopher->simulation->number_of_philosophers]);
+	fork = &(philosopher->simulation->forks[philosopher->id
+			% philosopher->simulation->number_of_philosophers]);
 	return (fork);
 }
 
@@ -35,9 +36,13 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 
 	action_time = get_current_time();
 	lock(&philosopher->state_lock);
-	if ((philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2) || (philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id % 2 == 0))
+	if ((philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2)
+		|| (philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id
+			% 2 == 0))
 		fork = get_right_fork(philosopher);
-	else if ((philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id % 2) || (philosopher->state == PHILOSOPHER_IS_THINKING && philosopher->id % 2 == 0))
+	else if ((philosopher->state == PHILOSOPHER_HAS_ONE_FORK && philosopher->id
+			% 2) || (philosopher->state == PHILOSOPHER_IS_THINKING
+			&& philosopher->id % 2 == 0))
 		fork = get_left_fork(philosopher);
 	else
 	{
@@ -45,7 +50,8 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 		return ;
 	}
 	lock(&fork->lock);
-	if (!fork->is_available) {
+	if (!fork->is_available)
+	{
 		unlock(&philosopher->state_lock);
 		unlock(&fork->lock);
 		return ;
@@ -55,7 +61,8 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 	log_action(action_time, PHILOSOPHER_TAKES_FORK, philosopher);
 	if (philosopher->state == PHILOSOPHER_IS_THINKING)
 		philosopher->state = PHILOSOPHER_HAS_ONE_FORK;
-	else {
+	else
+	{
 		set_philosopher_last_eating_time(philosopher, action_time);
 		philosopher->state = PHILOSOPHER_IS_EATING;
 		log_action(action_time, PHILOSOPHER_STARTS_EATING, philosopher);
@@ -67,16 +74,15 @@ void	philosopher_tries_forks(t_philosopher *philosopher)
 
 void	philosopher_releases_forks(t_philosopher *philosopher)
 {
-	set_fork_availability(&philosopher->simulation->forks[philosopher->id - 1],
-		TRUE);
-	set_fork_availability(&philosopher->simulation->forks[philosopher->id
-		% philosopher->simulation->number_of_philosophers], TRUE);
+	unlock(get_left_fork(philosopher));
+	unlock(get_right_fork(philosopher));
 }
 
 void	handle_philosopher_thinking(t_philosopher *philosopher)
 {
 	while (get_simulation_state(philosopher->simulation) != SIMULATION_ENDED
-		&& (get_philosopher_state(philosopher) == PHILOSOPHER_IS_THINKING || get_philosopher_state(philosopher) == PHILOSOPHER_HAS_ONE_FORK))
+		&& (get_philosopher_state(philosopher) == PHILOSOPHER_IS_THINKING
+			|| get_philosopher_state(philosopher) == PHILOSOPHER_HAS_ONE_FORK))
 	{
 		philosopher_tries_forks(philosopher);
 		usleep(10);
@@ -89,8 +95,8 @@ void	handle_philosopher_eating(t_philosopher *philosopher)
 	t_timestamp	last_eating_time;
 
 	last_eating_time = get_philosopher_last_eating_time(philosopher);
-	while (get_simulation_state(philosopher->simulation) != SIMULATION_ENDED && 
-		get_philosopher_state(philosopher) == PHILOSOPHER_IS_EATING)
+	while (get_simulation_state(philosopher->simulation) != SIMULATION_ENDED
+		&& get_philosopher_state(philosopher) == PHILOSOPHER_IS_EATING)
 	{
 		current_time = get_current_time();
 		if (current_time

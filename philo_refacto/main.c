@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 17:27:22 by tcharuel         ###   ########.fr       */
+/*   Created: 2024/01/22 18:09:43 by tcharuel          #+#    #+#             */
+/*   Updated: 2024/01/22 19:45:47 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	wait_simulation_starts(t_simulation *simulation)
 	size_t	i;
 
 	i = 0;
-	while (i < simulation->number_of_philosophers)
+	while (i < simulation->philosophers_count)
 	{
 		while (get_philosopher_state(&simulation->philosophers[i]) != PHILOSOPHER_IS_THINKING)
 			usleep(10);
@@ -25,25 +25,15 @@ void	wait_simulation_starts(t_simulation *simulation)
 	}
 	simulation->start_time = get_current_time();
 	i = 0;
-	while (i < simulation->number_of_philosophers)
+	while (i < simulation->philosophers_count)
 	{
-		set_philosopher_last_eating_time(&simulation->philosophers[i],
+		set_philosopher_last_eating(&simulation->philosophers[i],
 			simulation->start_time);
 		log_action(simulation->start_time, PHILOSOPHER_STARTS_THINKING,
 			&simulation->philosophers[i]);
 		i++;
 	}
 	set_simulation_state(simulation, SIMULATION_RUNNING);
-}
-
-void	handle_end_simulation(t_simulation *simulation)
-{
-	size_t	i;
-
-	set_simulation_state(simulation, SIMULATION_ENDED);
-	i = 0;
-	while (i < simulation->number_of_philosophers)
-		pthread_join(simulation->philosophers[i++].tid, NULL);
 }
 
 t_bool	has_enough_meals_eaten(t_simulation *simulation)
@@ -53,9 +43,9 @@ t_bool	has_enough_meals_eaten(t_simulation *simulation)
 	if (!simulation->has_number_of_times_each_philosopher_must_eat)
 		return (FALSE);
 	i = 0;
-	while (i < simulation->number_of_philosophers)
+	while (i < simulation->philosophers_count)
 	{
-		if (get_philosopher_meal_count(&simulation->philosophers[i]) >= simulation->number_of_times_each_philosopher_must_eat)
+		if (get_philosopher_meal_count(&simulation->philosophers[i]) >= simulation->min_meals)
 			return (FALSE);
 		i++;
 	}
@@ -71,10 +61,10 @@ void	wait_simulation_ends(t_simulation *simulation)
 	{
 		i = 0;
 		current_time = get_current_time();
-		while (i < simulation->number_of_philosophers)
+		while (i < simulation->philosophers_count)
 		{
 			if (current_time
-				- get_philosopher_last_eating_time(&simulation->philosophers[i]) > simulation->time_to_die)
+				- get_philosopher_last_eating(&simulation->philosophers[i]) > simulation->time_to_die)
 			{
 				set_philosopher_state(&simulation->philosophers[i],
 					PHILOSOPHER_IS_DEAD);
@@ -100,7 +90,6 @@ int	main(int argc, char **argv)
 		}
 		wait_simulation_starts(&simulation);
 		wait_simulation_ends(&simulation);
-		handle_end_simulation(&simulation);
 		simulation_cleanup(&simulation);
 	}
 	return (0);

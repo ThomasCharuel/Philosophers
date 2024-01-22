@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 18:45:08 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/20 18:52:50 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 17:20:01 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,71 +78,6 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 		|| philosopher_init(simulation) == ERROR)
 		return (ERROR);
 	return (SUCCESS);
-}
-
-void	wait_simulation_starts(t_simulation *simulation)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < simulation->number_of_philosophers)
-	{
-		while (get_philosopher_state(&simulation->philosophers[i]) != PHILOSOPHER_IS_THINKING)
-			usleep(10);
-		i++;
-	}
-	simulation->start_time = get_current_time();
-	i = 0;
-	while (i < simulation->number_of_philosophers)
-	{
-		set_philosopher_last_eating_time(&simulation->philosophers[i],
-			simulation->start_time);
-		log_action(simulation->start_time, PHILOSOPHER_STARTS_THINKING,
-			&simulation->philosophers[i]);
-		i++;
-	}
-	set_simulation_state(simulation, SIMULATION_RUNNING);
-}
-
-void	handle_end_simulation(t_simulation *simulation)
-{
-	size_t	i;
-
-	set_simulation_state(simulation, SIMULATION_ENDED);
-	i = 0;
-	while (i < simulation->number_of_philosophers)
-		pthread_join(simulation->philosophers[i++].tid, NULL);
-}
-
-void	wait_simulation_ends(t_simulation *simulation)
-{
-	t_bool		has_enough_meal;
-	size_t		i;
-	t_timestamp	current_time;
-
-	while (1)
-	{
-		i = 0;
-		current_time = get_current_time();
-		has_enough_meal = simulation->has_number_of_times_each_philosopher_must_eat;
-		while (i < simulation->number_of_philosophers)
-		{
-			has_enough_meal &= (get_philosopher_meal_count(&simulation->philosophers[i]) >= simulation->number_of_times_each_philosopher_must_eat);
-			if (current_time
-				- get_philosopher_last_eating_time(&simulation->philosophers[i]) > simulation->time_to_die)
-			{
-				set_philosopher_state(&simulation->philosophers[i],
-					PHILOSOPHER_IS_DEAD);
-				log_action(current_time, PHILOSOPHER_DIES,
-					&simulation->philosophers[i]);
-				return ;
-			}
-			i++;
-		}
-		if (has_enough_meal)
-			return ;
-		usleep(10);
-	}
 }
 
 void	simulation_cleanup(t_simulation *simulation)
