@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/21 09:56:04 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 10:32:45 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,10 @@
 # define ERROR -1
 # define FALSE 0
 # define TRUE 1
+# define FORKS_PAIR_COUNT_SEM "/forks_pair_count"
+# define PHILOSOPHER_PROCESS_READY_SEM "/philosopher_process_ready"
+# define READY_SEM "/ready"
+# define PHILOSOPHER_HAVE_EATEN_ENOUGH_SEM "/philosopher_have_eaten_enough"
 
 typedef unsigned char							t_bool;
 typedef long int								t_timestamp;
