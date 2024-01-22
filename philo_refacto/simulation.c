@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:11:27 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 20:01:50 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:14:48 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int	philosopher_init(t_simulation *simulation)
 		simulation->philosophers[i].state = PHILOSOPHER_INITIALIZED;
 		simulation->philosophers[i].meal_count = 0;
 		simulation->philosophers[i].simulation = simulation;
+		simulation->philosophers[i].forks[0] = NULL;
+		simulation->philosophers[i].forks[1] = NULL;
 		init_lock(&(simulation->philosophers[i].state_lock));
 		init_lock(&(simulation->philosophers[i].last_eating_lock));
 		init_lock(&(simulation->philosophers[i].meal_count_lock));

@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:10:23 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 20:00:23 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 20:17:21 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ typedef struct s_philosopher
 	t_simulation			*simulation;
 	unsigned int			meal_count;
 	t_lock					meal_count_lock;
+	t_lock					*forks[2];
 }							t_philosopher;
 
 typedef enum e_simulation_state
@@ -95,6 +96,10 @@ int							simulation_init(int argc, char **argv,
 void						simulation_cleanup(t_simulation *simulation);
 
 void						*philosopher_routine(void *data);
+
+t_lock						*get_left_fork(t_philosopher *philosopher);
+t_lock						*get_right_fork(t_philosopher *philosopher);
+void						philosopher_releases_forks(t_philosopher *philosopher);
 
 t_simulation_state			get_simulation_state(t_simulation *simulation);
 t_philosopher_state			get_philosopher_state(t_philosopher *philosopher);
