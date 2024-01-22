@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:53:03 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 23:15:55 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:38:09 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 	while (get_philosopher_state(philosopher) == PHILOSOPHER_IS_THINKING
 		|| get_philosopher_state(philosopher) == PHILOSOPHER_HAS_ONE_FORK)
 	{
+		current_time = get_current_time();
 		if ((get_philosopher_state(philosopher) == PHILOSOPHER_IS_THINKING
 				&& philosopher->id % 2)
 			|| (get_philosopher_state(philosopher) == PHILOSOPHER_HAS_ONE_FORK
@@ -38,7 +39,6 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 			lock(fork);
 			philosopher->forks[0] = fork;
 		}
-		current_time = get_current_time();
 		lock(&philosopher->state_lock);
 		if (philosopher->state == PHILOSOPHER_IS_THINKING)
 		{

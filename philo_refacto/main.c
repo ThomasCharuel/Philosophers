@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:09:43 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 19:50:01 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:29:14 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,16 @@ void	wait_simulation_ends(t_simulation *simulation)
 {
 	size_t		i;
 	t_timestamp	current_time;
+	t_timestamp	last_eating;
 
-	while (!has_enough_meals_eaten(simulation) && usleep(10) == 0)
+	while (!has_enough_meals_eaten(simulation) && usleep(100) == 0)
 	{
 		i = 0;
-		current_time = get_current_time();
 		while (i < simulation->philosophers_count)
 		{
-			if (current_time
-				- get_philosopher_last_eating(&simulation->philosophers[i]) > simulation->time_to_die)
+			last_eating = get_philosopher_last_eating(&simulation->philosophers[i]);
+			current_time = get_current_time();
+			if (current_time - last_eating > simulation->time_to_die)
 			{
 				set_philosopher_state(&simulation->philosophers[i],
 					PHILOSOPHER_IS_DEAD);
