@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 14:26:01 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:08:30 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ void	log_action(t_timestamp action_time, t_philosopher_action action,
 		printf("%ld %u is thinking\n", ms_since_start, philo->id);
 	else if (action == PHILOSOPHER_DIES)
 		printf("%ld %u died\n", ms_since_start, philo->id);
-	sem_post(philo->simulation->is_running);
+	if (action != PHILOSOPHER_DIES)
+		sem_post(philo->simulation->is_running);
 }
