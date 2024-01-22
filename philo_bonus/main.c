@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:16:58 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:49:07 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ void	wait_simulation_starts(t_simulation *simulation)
 
 	if (simulation->has_number_of_times_each_philosopher_must_eat)
 	{
-		pthread_create(&(simulation->philosophers_have_eaten_enough_monitoring_tid),
-			NULL, philosophers_have_eaten_enough_monitoring_routine,
-			simulation);
+		pthread_create(&(simulation->enough_meal_monitoring_tid), NULL,
+			philosophers_have_eaten_enough_monitoring_routine, simulation);
 	}
 	i = 0;
 	while (i++ < simulation->philosophers_count)
@@ -45,6 +44,11 @@ void	wait_simulation_starts(t_simulation *simulation)
 	i = 0;
 	while (i++ < simulation->philosophers_count)
 		sem_post(simulation->ready);
+}
+
+void	wait_simulation_ends(t_simulation *simulation)
+{
+	sem_wait(simulation->has_ended);
 }
 
 int	main(int argc, char **argv)
@@ -59,7 +63,7 @@ int	main(int argc, char **argv)
 			return (0);
 		}
 		wait_simulation_starts(&simulation);
-		sem_wait(simulation.has_ended);
+		wait_simulation_ends(&simulation);
 		simulation_cleanup(&simulation);
 	}
 	return (0);

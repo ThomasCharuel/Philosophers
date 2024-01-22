@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   log.c                                              :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/16 16:24:59 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:08:30 by tcharuel         ###   ########.fr       */
+/*   Created: 2024/01/16 22:02:55 by tcharuel          #+#    #+#             */
+/*   Updated: 2024/01/22 16:47:31 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,4 +33,27 @@ void	log_action(t_timestamp action_time, t_philosopher_action action,
 		printf("%ld %u died\n", ms_since_start, philo->id);
 	if (action != PHILOSOPHER_DIES)
 		sem_post(philo->simulation->is_running);
+}
+
+t_timestamp	get_current_time(void)
+{
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	return (current_time.tv_sec * 1000 + current_time.tv_usec / 1000);
+}
+
+unsigned int	ft_atoui(char *s)
+{
+	unsigned int	res;
+	size_t			i;
+
+	res = 0;
+	i = 0;
+	while (s[i])
+	{
+		res = 10 * res + s[i] - 48;
+		i++;
+	}
+	return (res);
 }

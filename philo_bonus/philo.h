@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 14:56:01 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:47:30 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ typedef struct s_simulation
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
 	t_bool				has_number_of_times_each_philosopher_must_eat;
-	unsigned int		number_of_times_each_philosopher_must_eat;
+	unsigned int		min_meals;
 	sem_t				*forks_pair_count;
 	sem_t				*philosopher_process_ready;
 	sem_t				*ready;
@@ -80,7 +80,7 @@ typedef struct s_simulation
 	sem_t				*has_ended;
 	sem_t				*philosopher_have_eaten_enough;
 	pid_t				*philosopher_pids;
-	pthread_t			philosophers_have_eaten_enough_monitoring_tid;
+	pthread_t			enough_meal_monitoring_tid;
 }						t_simulation;
 
 typedef struct s_philosopher
@@ -94,8 +94,6 @@ typedef struct s_philosopher
 	unsigned int		meal_count;
 }						t_philosopher;
 
-unsigned int			ft_atoui(char *s);
-
 int						simulation_init(int argc, char **argv,
 							t_simulation *simulation);
 void					simulation_cleanup(t_simulation *simulation);
@@ -103,9 +101,14 @@ void					simulation_cleanup(t_simulation *simulation);
 void					philosopher_routine(t_simulation *simulation,
 							unsigned int philosopher_id);
 
-t_timestamp				get_current_time(void);
+int						semaphore_init(sem_t **sem, char *name,
+							unsigned int value);
+int						semaphores_init(t_simulation *simulation);
+void					semaphores_cleanup(t_simulation *simulation);
 
 void					log_action(t_timestamp action_time,
 							t_philosopher_action action, t_philosopher *philo);
+t_timestamp				get_current_time(void);
+unsigned int			ft_atoui(char *s);
 
 #endif

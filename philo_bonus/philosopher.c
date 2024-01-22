@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:08:09 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 16:50:25 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 void	*check_philosopher_alive_routine(void *data)
 {
 	t_philosopher	*philosopher;
+	t_simulation	*simulation;
 	t_timestamp		current_time;
 
 	philosopher = (t_philosopher *)data;
+	simulation = philosopher->simulation;
 	while (TRUE)
 	{
 		current_time = get_current_time();
 		if (current_time
-			- philosopher->last_eating_time > philosopher->simulation->time_to_die)
+			- philosopher->last_eating_time > simulation->time_to_die)
 		{
 			log_action(current_time, PHILOSOPHER_DIES, philosopher);
-			sem_post(philosopher->simulation->has_ended);
+			sem_post(simulation->has_ended);
 		}
 		usleep(10);
 	}
@@ -44,7 +46,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 	if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
 	{
 		philosopher->meal_count++;
-		if (philosopher->meal_count == philosopher->simulation->number_of_times_each_philosopher_must_eat)
+		if (philosopher->meal_count == philosopher->simulation->min_meals)
 			sem_post(philosopher->simulation->philosopher_have_eaten_enough);
 	}
 }
@@ -66,11 +68,12 @@ void	handle_philosopher_eating(t_philosopher *philosopher)
 
 void	handle_philosopher_sleeping(t_philosopher *philosopher)
 {
+	t_timestamp	elapsed_sleeping_time;
 	t_timestamp	current_time;
 
 	current_time = get_current_time();
-	if (current_time
-		- philosopher->last_sleeping_time >= philosopher->simulation->time_to_sleep)
+	elapsed_sleeping_time = current_time - philosopher->last_sleeping_time;
+	if (elapsed_sleeping_time >= philosopher->simulation->time_to_sleep)
 	{
 		log_action(current_time, PHILOSOPHER_STARTS_THINKING, philosopher);
 		philosopher->state = PHILOSOPHER_IS_THINKING;
@@ -95,8 +98,7 @@ void	philosopher_routine(t_simulation *simulation,
 		&philosopher);
 	pthread_create(&monitoring_thread, NULL, &check_philosopher_alive_routine,
 		&philosopher);
-	pthread_detach(monitoring_thread);
-	while (TRUE)
+	while (usleep(10) == 0)
 	{
 		if (philosopher.state == PHILOSOPHER_IS_THINKING
 			&& simulation->philosophers_count > 1)
@@ -105,6 +107,5 @@ void	philosopher_routine(t_simulation *simulation,
 			handle_philosopher_eating(&philosopher);
 		if (philosopher.state == PHILOSOPHER_IS_SLEEPING)
 			handle_philosopher_sleeping(&philosopher);
-		usleep(10);
 	}
 }
