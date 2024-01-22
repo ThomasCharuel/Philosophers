@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 11:13:19 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/22 11:51:29 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	*philosophers_have_eaten_enough_monitoring_routine(void *data)
 	i = 0;
 	while (i < simulation->number_of_philosophers)
 		kill(simulation->philosophers_monitoring_data[i++].philosopher_pid,
-			SIGTERM);
+			SIGKILL);
 	return (NULL);
 }
 
@@ -40,7 +40,7 @@ void	*philosopher_monitoring_routine(void *data)
 	{
 		if (monitoring_data->simulation->philosophers_monitoring_data[i].philosopher_pid != monitoring_data->philosopher_pid)
 			kill(monitoring_data->simulation->philosophers_monitoring_data[i].philosopher_pid,
-				SIGTERM);
+				SIGKILL);
 		i++;
 	}
 	return (NULL);
