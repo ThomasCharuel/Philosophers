@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:44:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:50:50 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:09:37 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ int	semaphore_init(sem_t **sem, char *name, unsigned int value)
 
 int	semaphores_init(t_simulation *simulation)
 {
+	if (simulation->min_meals > 0
+		&& semaphore_init(&simulation->philosopher_have_eaten_enough,
+			PHILOSOPHER_HAVE_EATEN_ENOUGH_SEM, 0) == ERROR)
+		return (ERROR);
 	return (semaphore_init(&simulation->forks_pair_count, FORKS_PAIR_COUNT_SEM,
 			simulation->philosophers_count / 2)
 		|| semaphore_init(&simulation->philosopher_process_ready,
