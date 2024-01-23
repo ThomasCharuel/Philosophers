@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:49:32 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:02:27 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*check_philosopher_alive_routine(void *data)
 
 	philosopher = (t_philosopher *)data;
 	simulation = philosopher->simulation;
-	while (TRUE)
+	while (usleep(1000) == 0)
 	{
 		current_time = get_current_time();
 		sem_wait(simulation->last_eating_check);
@@ -33,7 +33,6 @@ void	*check_philosopher_alive_routine(void *data)
 			sem_post(simulation->has_ended);
 			return (NULL);
 		}
-		usleep(10);
 	}
 	return (NULL);
 }
