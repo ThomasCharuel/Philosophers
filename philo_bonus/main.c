@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:55:57 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:49:07 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:29:19 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	wait_simulation_starts(t_simulation *simulation)
 {
 	unsigned int	i;
 
-	if (simulation->has_number_of_times_each_philosopher_must_eat)
+	if (simulation->min_meals > 0)
 	{
 		pthread_create(&(simulation->enough_meal_monitoring_tid), NULL,
 			philosophers_have_eaten_enough_monitoring_routine, simulation);

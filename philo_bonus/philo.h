@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:47:30 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:29:07 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ typedef struct s_simulation
 	unsigned int		time_to_die;
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
-	t_bool				has_number_of_times_each_philosopher_must_eat;
 	unsigned int		min_meals;
 	sem_t				*forks_pair_count;
 	sem_t				*philosopher_process_ready;

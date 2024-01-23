@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 11:48:38 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:28:57 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,9 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 		return (ERROR);
 	simulation->is_running = NULL;
 	if (argc == 5)
-		simulation->has_number_of_times_each_philosopher_must_eat = FALSE;
+		simulation->min_meals = 0;
 	else
 	{
-		simulation->has_number_of_times_each_philosopher_must_eat = TRUE;
 		simulation->min_meals = ft_atoui(argv[5]);
 		if (!simulation->min_meals)
 			return (ERROR);

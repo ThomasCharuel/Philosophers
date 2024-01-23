@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/20 10:04:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:50:25 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:29:34 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 	philosopher->last_eating_time = current_time;
 	philosopher->state = PHILOSOPHER_IS_EATING;
 	log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
-	if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
+	if (philosopher->simulation->min_meals > 0)
 	{
 		philosopher->meal_count++;
 		if (philosopher->meal_count == philosopher->simulation->min_meals)
