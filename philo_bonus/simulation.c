@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 23:09:54 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 11:48:38 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 	simulation->time_to_die = ft_atoui(argv[2]);
 	simulation->time_to_eat = ft_atoui(argv[3]);
 	simulation->time_to_sleep = ft_atoui(argv[4]);
+	if (!simulation->philosophers_count || !simulation->time_to_die
+		|| !simulation->time_to_eat || !simulation->time_to_sleep)
+		return (ERROR);
 	simulation->is_running = NULL;
 	if (argc == 5)
 		simulation->has_number_of_times_each_philosopher_must_eat = FALSE;
@@ -59,6 +62,8 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 	{
 		simulation->has_number_of_times_each_philosopher_must_eat = TRUE;
 		simulation->min_meals = ft_atoui(argv[5]);
+		if (!simulation->min_meals)
+			return (ERROR);
 		if (semaphore_init(&simulation->philosopher_have_eaten_enough,
 				PHILOSOPHER_HAVE_EATEN_ENOUGH_SEM, 0) == ERROR)
 			return (ERROR);

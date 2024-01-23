@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 22:02:55 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/22 16:47:31 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 11:44:58 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ unsigned int	ft_atoui(char *s)
 	i = 0;
 	while (s[i])
 	{
+		if (s[i] < '0' || s[i] > '9')
+			return (0);
 		res = 10 * res + s[i] - 48;
 		i++;
 	}
