@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:53:03 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 11:28:52 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:09:37 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 		return ;
 	}
 	lock(&fork->lock);
-	if (!fork->is_available)
+	if (!fork->is_available || fork->last_philosopher == philosopher)
 	{
 		unlock(&fork->lock);
 		unlock(&philosopher->state_lock);

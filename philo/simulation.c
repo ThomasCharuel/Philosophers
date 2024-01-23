@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:11:27 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 11:47:34 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:10:39 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,31 @@ int	forks_init(t_simulation *simulation)
 	return (SUCCESS);
 }
 
-int	philosopher_init(t_simulation *simulation)
+int	philosopher_init(t_simulation *simulation, size_t i)
+{
+	simulation->philosophers[i].id = i + 1;
+	simulation->philosophers[i].state = PHILOSOPHER_INITIALIZED;
+	simulation->philosophers[i].meal_count = 0;
+	simulation->philosophers[i].simulation = simulation;
+	simulation->philosophers[i].left_fork = &simulation->forks[i];
+	simulation->philosophers[i].right_fork = &simulation->forks[(i + 1)
+		% simulation->philosophers_count];
+	init_lock(&(simulation->philosophers[i].state_lock));
+	init_lock(&(simulation->philosophers[i].last_eating_lock));
+	init_lock(&(simulation->philosophers[i].meal_count_lock));
+	if (!simulation->philosophers[i].state_lock.is_initialized
+		|| !simulation->philosophers[i].last_eating_lock.is_initialized
+		|| !simulation->philosophers[i].meal_count_lock.is_initialized
+		|| pthread_create(&(simulation->philosophers[i].tid), NULL,
+			philosopher_routine, &(simulation->philosophers[i])))
+	{
+		set_simulation_state(simulation, SIMULATION_ENDED);
+		return (ERROR);
+	}
+	return (SUCCESS);
+}
+
+int	philosophers_init(t_simulation *simulation)
 {
 	size_t	i;
 
@@ -49,29 +73,14 @@ int	philosopher_init(t_simulation *simulation)
 	i = 0;
 	while (i < simulation->philosophers_count)
 	{
-		simulation->philosophers[i].id = i + 1;
-		simulation->philosophers[i].state = PHILOSOPHER_INITIALIZED;
-		simulation->philosophers[i].meal_count = 0;
-		simulation->philosophers[i].simulation = simulation;
-		simulation->philosophers[i].left_fork = &simulation->forks[i];
-		simulation->philosophers[i].right_fork = &simulation->forks[(i + 1)
-			% simulation->philosophers_count];
-		init_lock(&(simulation->philosophers[i].state_lock));
-		init_lock(&(simulation->philosophers[i].last_eating_lock));
-		init_lock(&(simulation->philosophers[i].meal_count_lock));
-		if (!simulation->philosophers[i].state_lock.is_initialized
-			|| !simulation->philosophers[i].last_eating_lock.is_initialized
-			|| !simulation->philosophers[i].meal_count_lock.is_initialized
-			|| pthread_create(&(simulation->philosophers[i].tid), NULL,
-				philosopher_routine, &(simulation->philosophers[i])))
+		if (philosopher_init(simulation, i) == ERROR)
 		{
-			set_simulation_state(simulation, SIMULATION_ENDED);
 			while (i-- > 0)
 			{
+				pthread_join(simulation->philosophers[i].tid, NULL);
 				destroy_lock(&simulation->philosophers[i].state_lock);
 				destroy_lock(&(simulation->philosophers[i].last_eating_lock));
 				destroy_lock(&(simulation->philosophers[i].meal_count_lock));
-				pthread_join(simulation->philosophers[i].tid, NULL);
 			}
 			free(simulation->philosophers);
 			simulation->philosophers = NULL;
@@ -104,7 +113,7 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 			return (ERROR);
 	}
 	return (init_lock(&(simulation->state_lock)) || forks_init(simulation)
-		|| philosopher_init(simulation));
+		|| philosophers_init(simulation));
 }
 
 void	simulation_cleanup(t_simulation *simulation)
