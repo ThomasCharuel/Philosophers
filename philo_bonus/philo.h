@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 15:56:41 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:29:07 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:50:47 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # define READY_SEM "/ready"
 # define IS_RUNNING_SEM "/is_running"
 # define HAS_ENDED_SEM "/has_ended"
+# define LAST_EATING_SEM "/last_eating"
 # define PHILOSOPHER_HAVE_EATEN_ENOUGH_SEM "/philosopher_have_eaten_enough"
 
 typedef unsigned char	t_bool;
@@ -78,6 +79,7 @@ typedef struct s_simulation
 	sem_t				*is_running;
 	sem_t				*has_ended;
 	sem_t				*philosopher_have_eaten_enough;
+	sem_t				*last_eating_check;
 	pid_t				*philosopher_pids;
 	pthread_t			enough_meal_monitoring_tid;
 }						t_simulation;
@@ -87,8 +89,8 @@ typedef struct s_philosopher
 	unsigned int		id;
 	t_philosopher_state	state;
 	t_timestamp			start_time;
-	t_timestamp			last_eating_time;
-	t_timestamp			last_sleeping_time;
+	t_timestamp			last_eating;
+	t_timestamp			last_sleeping;
 	t_simulation		*simulation;
 	unsigned int		meal_count;
 }						t_philosopher;

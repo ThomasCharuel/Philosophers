@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 22:58:15 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:28:57 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:51:09 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	simulation_init(int argc, char **argv, t_simulation *simulation)
 	simulation->ready = NULL;
 	simulation->is_running = NULL;
 	simulation->has_ended = NULL;
+	simulation->last_eating_check = NULL;
 	simulation->philosopher_have_eaten_enough = NULL;
 	simulation->philosopher_pids = NULL;
 	simulation->philosophers_count = ft_atoui(argv[1]);

@@ -6,7 +6,7 @@
 #    By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/10 16:06:44 by tcharuel          #+#    #+#              #
-#    Updated: 2024/01/22 20:07:47 by tcharuel         ###   ########.fr        #
+#    Updated: 2024/01/23 12:34:01 by tcharuel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = philo
 SRC_FILES = forks.c getters.c main.c mutex.c philosopher.c setters.c simulation.c utils.c
 
 CC = cc
-CFLAGS = -Wextra -Wall -Werror -g
+CFLAGS = -Wextra -Wall -Werror
 RM = rm -f
 
 $(NAME): $(SRC_FILES)

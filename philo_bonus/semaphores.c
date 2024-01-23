@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 16:44:07 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:29:36 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:50:50 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,8 @@ int	semaphores_init(t_simulation *simulation)
 			PHILOSOPHER_PROCESS_READY_SEM, 0)
 		|| semaphore_init(&simulation->ready, READY_SEM, 0)
 		|| semaphore_init(&simulation->is_running, IS_RUNNING_SEM, 1)
-		|| semaphore_init(&simulation->has_ended, HAS_ENDED_SEM, 0));
+		|| semaphore_init(&simulation->has_ended, HAS_ENDED_SEM, 0)
+		|| semaphore_init(&simulation->last_eating_check, LAST_EATING_SEM, 1));
 }
 
 void	semaphores_cleanup(t_simulation *simulation)
@@ -44,4 +45,6 @@ void	semaphores_cleanup(t_simulation *simulation)
 		sem_close(simulation->is_running);
 	if (simulation->has_ended)
 		sem_close(simulation->has_ended);
+	if (simulation->last_eating_check)
+		sem_close(simulation->last_eating_check);
 }
