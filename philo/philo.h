@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:10:23 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 11:01:56 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:24:49 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ typedef struct s_simulation
 	unsigned int				time_to_die;
 	unsigned int				time_to_eat;
 	unsigned int				time_to_sleep;
-	t_bool						has_number_of_times_each_philosopher_must_eat;
 	unsigned int				min_meals;
 	t_timestamp					start_time;
 	t_fork						*forks;
@@ -107,6 +106,7 @@ void							simulation_cleanup(t_simulation *simulation);
 void							*philosopher_routine(void *data);
 
 void							philosopher_releases_forks(t_philosopher *philosopher);
+int								get_target_fork(t_philosopher *philosopher);
 
 t_simulation_state				get_simulation_state(t_simulation *simulation);
 t_philosopher_state				get_philosopher_state(t_philosopher *philosopher);

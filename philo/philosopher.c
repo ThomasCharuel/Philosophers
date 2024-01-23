@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:53:03 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:09:37 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 12:27:04 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,15 @@
 
 void	handle_philosopher_thinking(t_philosopher *philosopher)
 {
-	t_fork		*fork;
 	t_timestamp	current_time;
 
 	lock(&philosopher->state_lock);
-	if (philosopher->state == PHILOSOPHER_IS_THINKING)
+	if (get_target_fork(philosopher) == ERROR)
 	{
-		if (philosopher->id % 2)
-			fork = philosopher->right_fork;
-		else
-			fork = philosopher->left_fork;
-	}
-	else if (philosopher->state == PHILOSOPHER_HAS_ONE_FORK)
-	{
-		if (philosopher->id % 2)
-			fork = philosopher->left_fork;
-		else
-			fork = philosopher->right_fork;
-	}
-	else
-	{
-		unlock(&philosopher->state_lock);
-		return ;
-	}
-	lock(&fork->lock);
-	if (!fork->is_available || fork->last_philosopher == philosopher)
-	{
-		unlock(&fork->lock);
 		unlock(&philosopher->state_lock);
 		return ;
 	}
 	current_time = get_current_time();
-	fork->is_available = FALSE;
-	fork->last_philosopher = philosopher;
-	unlock(&fork->lock);
 	if (philosopher->state == PHILOSOPHER_IS_THINKING)
 	{
 		log_action(current_time, PHILOSOPHER_TAKES_FORK, philosopher);
@@ -59,7 +34,7 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 		log_action(current_time, PHILOSOPHER_STARTS_EATING, philosopher);
 		philosopher->state = PHILOSOPHER_IS_EATING;
 		set_philosopher_last_eating(philosopher, current_time);
-		if (philosopher->simulation->has_number_of_times_each_philosopher_must_eat)
+		if (philosopher->simulation->min_meals > 0)
 			incr_philosopher_meal_count(philosopher);
 	}
 	unlock(&philosopher->state_lock);
@@ -89,13 +64,15 @@ void	handle_philosopher_eating(t_philosopher *philosopher)
 void	handle_philosopher_sleeping(t_philosopher *philosopher)
 {
 	t_timestamp	current_time;
+	t_timestamp	last_sleeping;
 
+	last_sleeping = philosopher->last_sleeping;
 	while (get_philosopher_state(philosopher) == PHILOSOPHER_IS_SLEEPING
 		&& usleep(10) == 0)
 	{
 		current_time = get_current_time();
 		if (current_time
-			- philosopher->last_sleeping >= philosopher->simulation->time_to_sleep)
+			- last_sleeping >= philosopher->simulation->time_to_sleep)
 		{
 			log_action(current_time, PHILOSOPHER_STARTS_THINKING, philosopher);
 			set_philosopher_state(philosopher, PHILOSOPHER_IS_THINKING);
