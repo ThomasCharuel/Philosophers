@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:53:03 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 11:16:17 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 11:28:52 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,19 @@ void	handle_philosopher_thinking(t_philosopher *philosopher)
 
 	lock(&philosopher->state_lock);
 	if (philosopher->state == PHILOSOPHER_IS_THINKING)
+	{
 		if (philosopher->id % 2)
 			fork = philosopher->right_fork;
 		else
 			fork = philosopher->left_fork;
+	}
 	else if (philosopher->state == PHILOSOPHER_HAS_ONE_FORK)
+	{
 		if (philosopher->id % 2)
 			fork = philosopher->left_fork;
 		else
 			fork = philosopher->right_fork;
+	}
 	else
 	{
 		unlock(&philosopher->state_lock);
