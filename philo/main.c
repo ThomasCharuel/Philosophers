@@ -6,7 +6,7 @@
 /*   By: tcharuel <tcharuel@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:09:43 by tcharuel          #+#    #+#             */
-/*   Updated: 2024/01/23 12:25:15 by tcharuel         ###   ########.fr       */
+/*   Updated: 2024/01/23 13:37:39 by tcharuel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ t_bool	has_enough_meals_eaten(t_simulation *simulation)
 	size_t			i;
 	t_philosopher	*philosopher;
 
-	if (!simulation->min_meals > 0)
+	if (!simulation->min_meals)
 		return (FALSE);
 	i = 0;
 	while (i < simulation->philosophers_count)
